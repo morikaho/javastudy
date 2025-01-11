@@ -19,14 +19,15 @@ public class StudentManagementApplication {
     SpringApplication.run(StudentManagementApplication.class, args);
   }
 
-  //生徒情報を表示
+  //生徒情報を全件表示
   @GetMapping("/studentList")
   public List<Student> getStudentList() {
-    return repository.studentSearch();
+    return repository.searchStudents();
   }
 
+  //コース情報を全件表示
   @GetMapping("/studentCourseList")
   public List<StudentCourse> getStudentCourseList() {
-    return repository.studentCourseSearch();
+    return repository.searchStudentCourse();
   }
 }
