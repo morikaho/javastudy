@@ -1,33 +1,13 @@
 package raisetech.studentManagement;
 
-
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@RestController
-public class StudentManagementApplication {
 
-  @Autowired
-  private StudentRepository repository;
+public class StudentManagementApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(StudentManagementApplication.class, args);
-  }
-
-  //生徒情報を全件表示
-  @GetMapping("/studentList")
-  public List<Student> getStudentList() {
-    return repository.searchStudents();
-  }
-
-  //コース情報を全件表示
-  @GetMapping("/studentCourseList")
-  public List<StudentCourse> getStudentCourseList() {
-    return repository.searchStudentCourse();
   }
 }
