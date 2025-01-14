@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentManagement.controller.converter.StudentConverter;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentsCourses;
 import raisetech.studentManagement.domain.StudentDetail;
-import raisetech.studentManagement.service.StudentService;
 
 @RestController
 public class StudentController {
@@ -23,8 +23,8 @@ public class StudentController {
     this.service = service;
     this.converter = converter;
   }
-
-
+  
+  
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
     final List<Student> students = service.searchStudentList();
