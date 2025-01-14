@@ -1,32 +1,41 @@
 package raisetech.studentManagement.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.studentManagement.controller.converter.StudentConverter;
 import raisetech.studentManagement.date.Student;
-import raisetech.studentManagement.date.StudentCourse;
+import raisetech.studentManagement.date.StudentsCourses;
+import raisetech.studentManagement.domain.StudentDetail;
 import raisetech.studentManagement.service.StudentService;
 
 @RestController
 public class StudentController {
 
   private StudentService service;
+  private StudentConverter converter;
 
   @Autowired
-  public StudentController(StudentService service) {
+  public StudentController(StudentService service, StudentConverter converter) {
     this.service = service;
+    this.converter = converter;
   }
 
-  //生徒情報を全件表示
+
   @GetMapping("/studentList")
-  public List<Student> getStudentList() {
-    return service.searchStudentList();
+  public List<StudentDetail> getStudentList() {
+    final List<Student> students = service.searchStudentList();
+    final List<StudentsCourses> studentsCourses = service.searchStudentCourseList();
+
+    return converter.convertStudentDetails(students, studentsCourses);
   }
 
-  //コース情報を全件表示
+
   @GetMapping("/studentCourseList")
-  public List<StudentCourse> getStudentCourseList() {
+  public List<StudentsCourses> getStudentCourseList() {
     return service.searchStudentCourseList();
   }
 }
