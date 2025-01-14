@@ -27,7 +27,7 @@ public class StudentController {
 
   //コース情報を検索
   @GetMapping("/studentCourseList")
-  public List<StudentsCourses> getStudentCourseList() {
-    return service.searchStudentCourseList();
+  public List<StudentsCourses> getStudentCourseList(@RequestParam String course) {
+    return service.searchStudentCourseList(course);
   }
 }

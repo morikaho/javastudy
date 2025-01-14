@@ -31,12 +31,12 @@ public class StudentService {
     return filteredStudents;
   }
 
-  public List<StudentsCourses> searchStudentCourseList() {
+  public List<StudentsCourses> searchStudentCourseList(String course) {
     List <StudentsCourses> studentCourseList = repository.searchStudentCourse();
     //絞り込み検索で「Javaコース」のコース情報のみを抽出する。
     //抽出したリストをコントローラーに返す。
     List<StudentsCourses> filteredStudentcourse = studentCourseList.stream()
-        .filter(studentCourse -> studentCourse.getCourse().equals("JAVAコース"))
+        .filter(studentCourse -> studentCourse.getCourse().equals(course))
         .collect(Collectors.toList());
 
     return filteredStudentcourse;
