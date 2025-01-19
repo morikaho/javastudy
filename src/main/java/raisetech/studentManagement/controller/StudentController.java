@@ -1,18 +1,16 @@
 package raisetech.studentManagement.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import raisetech.studentManagement.controller.converter.StudentConverter;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentsCourses;
-import raisetech.studentManagement.domain.StudentDetail;
+import raisetech.studentManagement.service.StudentService;
 
-@RestController
+@Controller
 public class StudentController {
 
   private StudentService service;
@@ -23,16 +21,15 @@ public class StudentController {
     this.service = service;
     this.converter = converter;
   }
-  
-  
+
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() {
-    final List<Student> students = service.searchStudentList();
-    final List<StudentsCourses> studentsCourses = service.searchStudentCourseList();
+  public String getStudentList(Model model) {
+    List<Student> students = service.searchStudentList();
+    List<StudentsCourses> studentsCourses = service.searchStudentCourseList();
 
-    return converter.convertStudentDetails(students, studentsCourses);
+    model.addAttribute("studentList", converter.convertStudentDetails(students, studentsCourses));
+    return "studentList";
   }
-
 
   @GetMapping("/studentCourseList")
   public List<StudentsCourses> getStudentCourseList() {
