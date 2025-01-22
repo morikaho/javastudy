@@ -2,7 +2,6 @@ package raisetech.studentManagement.service;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,7 @@ public class StudentService {
   }
 
   @Transactional
-  public void registerStudent(StudentDetail studentDetail){
+  public void registerStudent(StudentDetail studentDetail) {
     Random random = new Random();
 
     //ランダムなstudentのid
@@ -40,10 +39,10 @@ public class StudentService {
     studentDetail.getStudent().setDeleted(false);
     repository.insertStudent(studentDetail.getStudent());
     //コース情報
-    for(StudentsCourses studentsCourses : studentDetail.getStudentsCourses()){
-    studentsCourses.setStudentId(randomStudentId);
-    studentsCourses.setId(String.valueOf(random.nextInt(100000000)));
-    repository.insertStudentCourse(studentsCourses);
+    for (StudentsCourses studentsCourses : studentDetail.getStudentsCourses()) {
+      studentsCourses.setStudentId(randomStudentId);
+      studentsCourses.setId(String.valueOf(random.nextInt(100000000)));
+      repository.insertStudentCourse(studentsCourses);
     }
 
   }
