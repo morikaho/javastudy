@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>受講生登録</title>
+<body>
+<h1>受講生登録</h1>
+<h4>受講生情報</h4>
+<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
+  <div>
+    <label for="name">名前　　　　　:</label>
+    <input type="text" id="name" th:field="*{student.fullName}" required/>
+  </div>
+  <div>
+    <label for="furigana">かな名　　　　:</label>
+    <input type="text" id="furigana" th:field="*{student.furigana}" required/>
+  </div>
+  <div>
+    <label for="nickName">ニックネーム　:</label>
+    <input type="text" id="nickName" th:field="*{student.nickname}" required/>
+  </div>
+  <div>
+    <label for="email">メールアドレス:</label>
+    <input type="text" id="email" th:field="*{student.emailAddress}" required/>
+  </div>
+  <div>
+    <label for="area">地域　　　　　:</label>
+    <input type="text" id="area" th:field="*{student.area}" required/>
+  </div>
+  <div>
+    <label for="age">年齢　　　　　:</label>
+    <input type="text" id="age" th:field="*{student.age}" required/>
+  </div>
+  <div>
+    <label for="sex">性別　　　　　:</label>
+    <input type="text" id="sex" th:field="*{student.sex}" required/>
+  </div>
+  <div>
+    <label for="remark">備考欄　　　　:</label>
+    <input type="text" id="remark" th:field="*{student.remark}" required/>
+  </div>
+  <h4>コース情報</h4>
+  <div>
+    <label for=course>コース名　　　:</label>
+    <input type="text" id="course" th:field="*{studentsCourses[0].course}" required/>
+  </div>
+  <div>
+    <label for="startDate">受講開始日　　:</label>
+    <input type="text" id="startDate" th:field="*{studentsCourses[0].startDate}" required/>
+  </div>
+  <div>
+    <label for="expectedCompletionDate">受講終了予定日:</label>
+    <input type="text" id="expectedCompletionDate" th:field="*{studentsCourses[0].expectedCompletionDate}" required/>
+  </div>
+  <div>
+    <button type="submit">登録</button>
+  </div>
+</form>
+</body>
+</html>
