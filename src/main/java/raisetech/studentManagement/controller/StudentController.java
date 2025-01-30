@@ -1,6 +1,4 @@
 package raisetech.studentManagement.controller;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
