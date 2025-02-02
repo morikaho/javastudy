@@ -4,58 +4,55 @@
   <title>受講生更新</title>
 <body>
 <style>
-  form dl {
+  form div {
     display: flex;
   }
-  form dl dt {
+  form div label {
 	  width: 150px;
   }
 </style>
 <h1>受講生更新</h1>
 <form th:action="@{/updateStudent(id=${studentDetail.student.id})}" th:object="${studentDetail}"
       method="post">
-  <dl>
-    <dt for="name">名前</dt>
-    <dd><input type="text" id="name" th:field="*{student.fullName}" required/></dd>
-  </dl>
-  <dl>
-    <dt for="furigana">かな名</dt>
-    <dd><input type="text" id="furigana" th:field="*{student.furigana}" required/></dd>
-  </dl>
-  <dl>
-    <dt for="nickName">ニックネーム</dt>
-    <dd><input type="text" id="nickName" th:field="*{student.nickname}" required/></dd>
-  </dl>
-  <dl>
-    <dt for="email">メールアドレス</dt>
-    <dd><input type="text" id="email" th:field="*{student.emailAddress}" required/></dd>
-  </dl>
-  <dl>
-    <dt for="area">地域</dt>
-    <dd><input type="text" id="area" th:field="*{student.area}" required/></dd>
-  </dl>
-  <dl>
-    <dt for="age">年齢</dt>
-    <dd><input type="text" id="age" th:field="*{student.age}"/></dd>
-  </dl>
-  <dl>
-    <dt for="sex">性別</dt>
-    <dd><input type="text" id="sex" th:field="*{student.sex}"/></dd>
-  </dl>
-  <dl>
-    <dt for="remark">備考</dt>
-    <dd><input type="text" id="remark" th:field="*{student.remark}"/></dd>
-  </dl>
-  <dl th:each="course, stat : *{studentsCourses}">
-    <dt for="course" th:for="studentCourse.__${stat.index}__.course">受講コース名</dt>
-    <dd><input type="text" id="course" th:id="studentCourse.__${stat.index}__.course"
-               th:field="*{studentsCourses[__${stat.index}__].course}"/></dd>
-  </dl>
-  <dl>
-    <dt>
-      <button type="submit">登録</button>
-    </dt>
-  </dl>
+  <div>
+    <label for="name">名前</label>
+    <input type="text" id="name" th:field="*{student.fullName}" required/>
+  </div>
+  <div>
+    <label for="furigana">かな名</label>
+    <input type="text" id="furigana" th:field="*{student.furigana}" required/>
+  </div>
+  <div>
+    <label for="nickName">ニックネーム</label>
+    <input type="text" id="nickName" th:field="*{student.nickname}" required/>
+  </div>
+  <div>
+    <label for="email">メールアドレス</label>
+    <input type="text" id="email" th:field="*{student.emailAddress}" required/>
+  </div>
+  <div>
+    <label for="area">地域</label>
+    <input type="text" id="area" th:field="*{student.area}" required/>
+  </div>
+  <div>
+    <label for="age">年齢</label>
+    <input type="text" id="age" th:field="*{student.age}" required/>
+  </div>
+  <div>
+    <label for="sex">性別</label>
+    <input type="text" id="sex" th:field="*{student.sex}" required/>
+  </div>
+  <div>
+    <label for="remark">備考欄</label>
+    <input type="text" id="remark" th:field="*{student.remark}" required/>
+  </div>
+  <div>
+    <label for=course>コース名</label>
+    <input type="text" id="course" th:field="*{studentsCourses[0].course}" required/>
+  </div>
+  <div>
+    <button type="submit">登録</button>
+  </div>
 </form>
 </body>
 </html>
