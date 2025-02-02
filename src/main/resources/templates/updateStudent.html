@@ -10,6 +10,9 @@
   form div label {
 	  width: 150px;
   }
+  div {
+  margin-bottom: 8px;
+  }
 </style>
 <h1>受講生更新</h1>
 <form th:action="@{/updateStudent(id=${studentDetail.student.id})}" th:object="${studentDetail}"

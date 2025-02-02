@@ -10,6 +10,9 @@
   form div label {
 	  width: 150px;
   }
+  div {
+  margin-bottom: 8px;
+  }
 </style>
 <h1>受講生登録</h1>
 <form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
