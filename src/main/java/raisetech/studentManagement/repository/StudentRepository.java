@@ -23,7 +23,7 @@ public interface StudentRepository {
    * @return　全件検索した受講生情報の一覧
    */
   //生徒全件検索
-  @Select("SELECT * FROM students")
+  @Select("SELECT * FROM students WHERE is_deleted = 0")
   List<Student> search();
 
   //生徒単一検索

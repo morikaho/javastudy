@@ -1,4 +1,5 @@
 package raisetech.studentManagement.controller;
+
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import raisetech.studentManagement.controller.converter.StudentConverter;
 
 import raisetech.studentManagement.date.Student;
@@ -33,7 +33,6 @@ public class StudentController {
   public String getStudentList(Model model) {
     List<Student> students = service.searchStudentList();
     List<StudentsCourses> studentsCourses = service.searchStudentCourseList();
-
     model.addAttribute("studentList", converter.convertStudentDetails(students, studentsCourses));
     return "studentList";
   }
