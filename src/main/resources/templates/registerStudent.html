@@ -42,6 +42,7 @@
   </div>
   <div>
     <label for="sex">性別</label>
+    
     <input type="text" id="sex" th:field="*{student.sex}"/>
   </div>
   <div>
@@ -53,6 +54,7 @@
            th:for="studentCourse.__${stat.index}__.course">受講コース名</label>
     <input type="text" id="courseName" th:id="studentCourse.__${stat.index}__.course"
            th:field="*{studentsCourses[__${stat.index}__].course}"/>
+
   </div>
   <div>
     <button type="submit">登録</button>
