@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>受講生登録</title>
+  <title>受講生更新</title>
 <body>
 <style>
   form div {
@@ -14,8 +14,9 @@
   margin-bottom: 8px;
   }
 </style>
-<h1>受講生登録</h1>
-<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
+<h1>受講生更新</h1>
+<form th:action="@{/updateStudent(id=${studentDetail.student.id})}" th:object="${studentDetail}"
+      method="post">
   <div>
     <label for="name">名前</label>
     <input type="text" id="name" th:field="*{student.fullName}" required/>
