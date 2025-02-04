@@ -1,10 +1,7 @@
 package raisetech.studentManagement.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +21,21 @@ public class StudentService {
   }
 
   public List<Student> searchStudentList() {
-    return repository.searchStudents();
+    return repository.search();
   }
 
   public List<StudentsCourses> searchStudentCourseList() {
-    return repository.searchStudentCourse();
+    return repository.searchStudentsCoursesList();
   }
 
   //単一の生徒情報検索
-  public StudentDetail searchOneStudent(int id) {
-    StudentDetail searchOneStudent = new StudentDetail();
-    searchOneStudent.setStudent(repository.searchOneStudent(id));
-    searchOneStudent.setStudentsCourses(repository.searchOneStudentCourse(id));
-    return searchOneStudent;
+  public StudentDetail searchStudent(int id) {
+    Student student = repository.searchStudent(id);
+    List<StudentsCourses> studentsCourses = repository.searchStudentsCourses(student.getId());
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudent(student);
+    studentDetail.setStudentsCourses(studentsCourses);
+    return studentDetail;
   }
 
   //生徒登録
@@ -53,12 +52,10 @@ public class StudentService {
   }
 
   @Transactional
-  public void updateStudent(int id, StudentDetail studentDetail) {
-    studentDetail.getStudent().setId(id);
+  public void updateStudent(StudentDetail studentDetail) {
     repository.updateStudent(studentDetail.getStudent());
     for (StudentsCourses studentsCourse : studentDetail.getStudentsCourses()) {
-      studentDetail.getStudentsCourses().getFirst().setStudentId(id);
-      repository.updateStudentCourses(studentsCourse);
+      repository.updateStudentsCourses(studentsCourse);
     }
   }
 }

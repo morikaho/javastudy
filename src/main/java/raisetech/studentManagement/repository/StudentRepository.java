@@ -22,19 +22,21 @@ public interface StudentRepository {
    *
    * @return　全件検索した受講生情報の一覧
    */
+  //生徒全件検索
+  @Select("SELECT * FROM students WHERE is_deleted = 0")
+  List<Student> search();
 
-  @Select("SELECT * FROM students")
-  List<Student> searchStudents();
-
-  @Select("SELECT * FROM students_courses")
-  List<StudentsCourses> searchStudentCourse();
-
-  //単一検索
+  //生徒単一検索
   @Select("SELECT * FROM students WHERE id = #{id}")
-  Student searchOneStudent(int id);
+  Student searchStudent(int id);
 
-  @Select("SELECT student_id FROM students_courses WHERE student_id = #{studentId}")
-  List<StudentsCourses> searchOneStudentCourse(int id);
+  //コース全件検索
+  @Select("SELECT * FROM students_courses")
+  List<StudentsCourses> searchStudentsCoursesList();
+
+  //コース単一検索
+  @Select("SELECT * FROM students_courses WHERE student_id = #{studentId}")
+  List<StudentsCourses> searchStudentsCourses(int studentId);
 
   @Insert(
       "INSERT INTO students (full_name, furigana, nick_name, email_address, area, age, sex, remark, is_deleted) "
@@ -50,12 +52,11 @@ public interface StudentRepository {
   //更新
   @Update(
       "UPDATE students SET full_name = #{fullName}, furigana = #{furigana}, nick_name = #{nickname},"
-          + "email_address = #{emailAddress}, area = #{area}, age = #{age}, sex = #{sex}, remark = #{remark} "
-          + "WHERE id = #{id}")
+          + "email_address = #{emailAddress}, area = #{area}, age = #{age}, sex = #{sex}, remark = #{remark}, is_deleted =#{isDeleted} WHERE id = #{id}")
   void updateStudent(Student student);
 
-  @Update("UPDATE students_courses SET course = #{course} WHERE student_id = #{studentId}")
-  void updateStudentCourses(StudentsCourses studentsCourses);
+  @Update("UPDATE students_courses SET course = #{course} WHERE id = #{id}")
+  void updateStudentsCourses(StudentsCourses studentsCourses);
 }
 
 
