@@ -15,6 +15,7 @@
     <th>年齢</th>
     <th>性別</th>
     <th>備考</th>
+    <th>キャンセル</th>
     <th>コース名</th>
     <th>受講開始日</th>
     <th>受講終了予定日</th>
@@ -34,9 +35,13 @@
     <td th:text="${studentDetail.student.age}"></td>
     <td th:text="${studentDetail.student.sex}"></td>
     <td th:text="${studentDetail.student.remark}"></td>
+    <td>
+      <input type="checkbox" th:checked="${studentDetail.student.deleted}"/>
+    </td>
     <td th:text="${studentDetail.studentsCourses.![course]}"></td>
     <td th:text="${studentDetail.studentsCourses.![startDate]}"></td>
-    <td th:text="${studentDetail.studentsCourses.![expectedCompletionDate]}"></td>
+    <td th:text="${studentDetail.studentsCourses.![expectedCompletionDate]}">
+    </td>
   </tr>
   </tbody>
 </table>
