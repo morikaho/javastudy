@@ -12,7 +12,7 @@ import java.util.Map;
 import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class Handler {
 
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<Map<String, Object>> handleValidationException(
@@ -26,5 +26,10 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(errorResponse);
+  }
+
+  @ExceptionHandler(TestException.class)
+  public ResponseEntity<String> handleTestException(TestException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 }
