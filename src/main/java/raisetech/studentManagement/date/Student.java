@@ -12,7 +12,7 @@ public class Student {
 
   @NotBlank
   @Pattern(regexp = "^\\d+$")
-  private int id;
+  private String id;
 
   @NotBlank
   private String fullName;

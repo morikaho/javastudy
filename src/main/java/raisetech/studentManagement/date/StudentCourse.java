@@ -12,11 +12,11 @@ public class StudentCourse {
 
   @NotBlank
   @Pattern(regexp = "^\\d+$")
-  private int id;
+  private String id;
 
   @NotBlank
   @Pattern(regexp = "^\\d+$")
-  private int studentId;
+  private String studentId;
 
   @NotBlank
   private String course;
