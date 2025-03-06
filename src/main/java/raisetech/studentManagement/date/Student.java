@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,4 +51,6 @@ public class Student {
 
   @Schema(description = "削除フラグ（true: 削除済み, false: 有効）", example = "false")
   private boolean isDeleted;
+
+
 }

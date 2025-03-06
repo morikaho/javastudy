@@ -1,6 +1,6 @@
 package raisetech.studentManagement.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,7 +64,7 @@ class StudentServiceTest {
 
     verify(repository, times(1)).searchStudent(id);
     verify(repository, times(1)).searchStudentCourse(id);
-    assertEquals(actual.getStudent().getId(), expected.getStudent().getId());
+    assertEquals(expected, actual);
   }
 
   @Test
@@ -89,9 +89,9 @@ class StudentServiceTest {
 
     sut.initStudentCourse(studentCourse, student);
 
-    assertEquals(student.getId(), studentCourse.getStudentId());
-    assertEquals(studentCourse.getStartDate(), now);
-    assertEquals(studentCourse.getExpectedCompletionDate(), now.plusYears(1));
+    assertEquals("100", studentCourse.getStudentId());
+    assertEquals(now, studentCourse.getStartDate());
+    assertEquals(now.plusYears(1), studentCourse.getExpectedCompletionDate());
   }
 
   @Test
