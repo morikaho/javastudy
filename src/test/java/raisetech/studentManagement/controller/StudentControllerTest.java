@@ -80,10 +80,31 @@ class StudentControllerTest {
 
     mockMvc.perform(get("/student/{id}", id))
         .andExpect(status().isOk())
-        .andExpect(content().json(
-            "{\"student\":{\"id\":\"100\",\"fullName\":\"渡辺　恵子\",\"furigana\":\"わたなべ　けいこ\",\"nickname\":\"けいこ\","
-                + "\"emailAddress\":\"unique.user1937@example.com\",\"area\":\"東京都\",\"age\":30,\"sex\":\"女\",\"remark\":\"特になし\",\"deleted\":false},"
-                + "\"studentCourseList\":[{\"id\":\"100\",\"studentId\":\"100\",\"course\":\"JAVAコース\",\"startDate\":\"2024-01-01\",\"expectedCompletionDate\":\"2024-04-01\"}]}"));
+        .andExpect(content().json("""
+            {
+              "student":{
+                "id":"100",
+                "fullName":"渡辺　恵子",
+                "furigana":"わたなべ　けいこ",
+                "nickname":"けいこ",
+                "emailAddress":"unique.user1937@example.com",
+                "area":"東京都",
+                "age":30,
+                "sex":"女",
+                "remark":"特になし",
+                "deleted":false
+              },
+              "studentCourseList":[
+                {
+                  "id":"100",
+                  "studentId":"100",
+                  "course":"JAVAコース",
+                  "startDate":"2024-01-01",
+                  "expectedCompletionDate":"2024-04-01"
+                }
+              ]
+            }
+            """));
 
     verify(service, times(1)).searchStudent(id);
   }
@@ -97,10 +118,27 @@ class StudentControllerTest {
 
     mockMvc.perform(post("/registerStudent")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(
-                "{\"student\":{\"id\":\"100\",\"fullName\":\"渡辺　恵子\",\"furigana\":\"わたなべ　けいこ\",\"nickname\":\"けいこ\","
-                    + "\"emailAddress\":\"unique.user1937@example.com\",\"area\":\"東京都\",\"age\":30,\"sex\":\"女\"},"
-                    + "\"studentCourseList\":[{\"id\":\"100\",\"studentId\":\"100\",\"course\":\"JAVAコース\"}]}"))
+            .content("""
+                {
+                  "student":{
+                    "id":"100",
+                    "fullName":"渡辺　恵子",
+                    "furigana":"わたなべ　けいこ",
+                    "nickname":"けいこ",
+                    "emailAddress":"unique.user1937@example.com",
+                    "area":"東京都",
+                    "age":30,
+                    "sex":"女"
+                  },
+                  "studentCourseList":[
+                    {
+                      "id":"100",
+                      "studentId":"100",
+                      "course":"JAVAコース"
+                    }
+                  ]
+                }
+                """))
         .andExpect(status().isOk());
 
     verify(service, times(1)).registerStudent(any(StudentDetail.class));
@@ -110,10 +148,27 @@ class StudentControllerTest {
   void 受講生詳細の更新ができて適切なメッセージが返ってくること() throws Exception {
     mockMvc.perform(put("/updateStudent")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(
-                "{\"student\":{\"id\":\"100\",\"fullName\":\"渡辺　恵子\",\"furigana\":\"わたなべ　けいこ\",\"nickname\":\"けいこ\","
-                    + "\"emailAddress\":\"unique.user1937@example.com\",\"area\":\"東京都\",\"age\":30,\"sex\":\"女\"},"
-                    + "\"studentCourseList\":[{\"id\":\"100\",\"studentId\":\"100\",\"course\":\"JAVAコース\"}]}"))
+            .content("""
+                {
+                  "student":{
+                    "id":"100",
+                    "fullName":"渡辺　恵子",
+                    "furigana":"わたなべ　けいこ",
+                    "nickname":"けいこ",
+                    "emailAddress":"unique.user1937@example.com",
+                    "area":"東京都",
+                    "age":30,
+                    "sex":"女"
+                  },
+                  "studentCourseList":[
+                    {
+                      "id":"100",
+                      "studentId":"100",
+                      "course":"JAVAコース"
+                    }
+                  ]
+                }
+                """))
         .andExpect(status().isOk())
         .andExpect(content().string("更新処理が成功しました。"));
 
@@ -176,7 +231,8 @@ class StudentControllerTest {
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(studentCourse);
 
     assertThat(violations.size()).isEqualTo(2);
-    assertThat(violations).extracting(v -> v.getPropertyPath().toString(), ConstraintViolation::getMessage)
+    assertThat(violations).extracting(v -> v.getPropertyPath().toString(),
+            ConstraintViolation::getMessage)
         .containsOnly(
             tuple("id", "数字のみ入力するようにしてください。"),
             tuple("studentId", "数字のみ入力するようにしてください。")
