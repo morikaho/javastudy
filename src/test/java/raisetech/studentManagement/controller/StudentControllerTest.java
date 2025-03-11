@@ -2,14 +2,12 @@ package raisetech.studentManagement.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
 import static org.mockito.Mockito.when;
-import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -22,7 +20,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -50,21 +47,10 @@ class StudentControllerTest {
   @Test
   void 受講生詳細の一覧検索が実行できて空のリストが返ってくること() throws Exception {
     mockMvc.perform(get("/studentList"))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(content().json("[]"));
 
     verify(service, times(1)).searchStudentList();
-  }
-
-  @Test
-  void studentsで検索をした際適切なエラーメッセージが返ってくること() throws Exception {
-    mockMvc.perform(get("/students"))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.status").value(400))
-        .andExpect(jsonPath("$.error").value("Bad Request"))
-        .andExpect(jsonPath("$.message").value(
-            "現在このAPIは利用できません。URLは「students」ではなく「studentList」を利用してください。"))
-        .andExpect(jsonPath("$.path").value("/students"));
-
   }
 
   @Test
@@ -72,7 +58,7 @@ class StudentControllerTest {
     String id = "100";
     Student student = new Student(id, "渡辺　恵子", "わたなべ　けいこ", "けいこ",
         "unique.user1937@example.com", "東京都", 30, "女", "特になし", false);
-    StudentCourse studentCourse = new StudentCourse(id, "100", "JAVAコース",
+    StudentCourse studentCourse = new StudentCourse("100", id, "JAVAコース",
         LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"));
     StudentDetail studentDetail = new StudentDetail(student, List.of(studentCourse));
 
@@ -111,17 +97,13 @@ class StudentControllerTest {
 
   @Test
   void 受講生詳細の登録ができて空の受講生詳細が返ってくること() throws Exception {
-    Student student = new Student();
-    StudentDetail studentDetail = new StudentDetail(student, new ArrayList<>());
-
-    when(service.registerStudent(any(StudentDetail.class))).thenReturn(studentDetail);
-
+    //リクエストデータは適切に構築して入力チェックの検証も兼ねている。
+    //本来であれば返りは登録されたデータが入るが、モック化すると意味がないため、レスポンスは作らない。
     mockMvc.perform(post("/registerStudent")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {
                   "student":{
-                    "id":"100",
                     "fullName":"渡辺　恵子",
                     "furigana":"わたなべ　けいこ",
                     "nickname":"けいこ",
@@ -132,8 +114,6 @@ class StudentControllerTest {
                   },
                   "studentCourseList":[
                     {
-                      "id":"100",
-                      "studentId":"100",
                       "course":"JAVAコース"
                     }
                   ]
@@ -141,7 +121,7 @@ class StudentControllerTest {
                 """))
         .andExpect(status().isOk());
 
-    verify(service, times(1)).registerStudent(any(StudentDetail.class));
+    verify(service, times(1)).registerStudent(any());
   }
 
   @Test
@@ -172,7 +152,18 @@ class StudentControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().string("更新処理が成功しました。"));
 
-    verify(service, times(1)).updateStudent(any(StudentDetail.class));
+    verify(service, times(1)).updateStudent(any());
+  }
+
+  @Test
+  void studentsで検索をした際適切なエラーメッセージが返ってくること() throws Exception {
+    mockMvc.perform(get("/students"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.error").value("Bad Request"))
+        .andExpect(jsonPath("$.message").value(
+            "現在このAPIは利用できません。URLは「students」ではなく「studentList」を利用してください。"))
+        .andExpect(jsonPath("$.path").value("/students"));
   }
 
   @Test
