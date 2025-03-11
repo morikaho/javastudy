@@ -82,14 +82,15 @@ class StudentServiceTest {
 
   @Test
   void 受講生の登録_受講生コース情報の初期情報の設定が適切に行われていること() {
+    String id = "100";
     Student student = new Student();
-    student.setId("100");
+    student.setId(id);
     StudentCourse studentCourse = new StudentCourse();
     LocalDate now = LocalDate.now();
 
-    sut.initStudentCourse(studentCourse, student);
+    sut.initStudentCourse(studentCourse, student.getId());
 
-    assertEquals("100", studentCourse.getStudentId());
+    assertEquals(id, studentCourse.getStudentId());
     assertEquals(now, studentCourse.getStartDate());
     assertEquals(now.plusYears(1), studentCourse.getExpectedCompletionDate());
   }

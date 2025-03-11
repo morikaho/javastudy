@@ -4,22 +4,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Schema(description = "受講生コース情報")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentCourse {
 
   @Schema(description = "コースID", example = "1234")
   @NotBlank
-  @Pattern(regexp = "^\\d+$")
+  @Pattern(regexp = "^\\d+$",message = "数字のみ入力するようにしてください。")
   private String id;
 
   @Schema(description = "受講生のID", example = "1234")
   @NotBlank
-  @Pattern(regexp = "^\\d+$")
+  @Pattern(regexp = "^\\d+$",message = "数字のみ入力するようにしてください。")
   private String studentId;
 
   @Schema(description = "コース名", example = "JAVAコース")
