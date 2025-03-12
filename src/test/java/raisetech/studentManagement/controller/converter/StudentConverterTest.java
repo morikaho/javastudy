@@ -20,24 +20,7 @@ class StudentConverterTest {
   }
 
   @Test
-  void 受講生一人に紐づく受講生コース情報一つがマッピングされること() {
-    String id = "100";
-    Student student = new Student(id, "渡辺　恵子", "わたなべ　けいこ", "けいこ",
-        "unique.user1937@example.com", "東京都", 30, "女", "特になし", false);
-    List<Student> studentList = List.of(student);
-    StudentCourse studentCourse = new StudentCourse("100", id, "JAVAコース",
-        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"));
-    List<StudentCourse> studentCourseList = List.of(studentCourse);
-
-    List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList);
-
-    assertThat(actual).hasSize(1);
-    assertThat(actual.getFirst().getStudent()).isEqualTo(student);
-    assertThat(actual.getFirst().getStudentCourseList()).containsExactly(studentCourse);
-  }
-
-  @Test
-  void 受講生2人に紐づく受講コース2つが正しくマッピングされること() {
+  void 受講生に紐づく受講コースが正しくマッピングされること() {
     String id1 = "100";
     String id2 = "101";
     Student student1 = new Student(id1, "渡辺　恵子", "わたなべ　けいこ", "けいこ",
