@@ -18,7 +18,6 @@ import lombok.Setter;
 public class Student {
 
   @Schema(description = "受講生ID", example = "1234")
-  @NotBlank
   @Pattern(regexp = "^\\d+$",message = "数字のみ入力するようにしてください。")
   private String id;
 
