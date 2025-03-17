@@ -23,23 +23,17 @@
   </select>
 
   <!-- 受講生の登録 -->
-  <insert id="insertStudent" parameterType="raisetech.studentManagement.date.Student">
+  <insert id="insertStudent" parameterType="raisetech.studentManagement.date.Student" useGeneratedKeys="true" keyProperty="id">
     INSERT INTO students (full_name, furigana, nick_name, email_address, area, age, sex, remark,
     is_deleted)
     VALUES (#{fullName}, #{furigana}, #{nickname}, #{emailAddress}, #{area}, #{age}, #{sex},
     #{remark}, false)
-    <selectKey keyProperty="id" resultType="int" order="AFTER">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
   </insert>
 
   <!-- 受講生コース情報の登録 -->
-  <insert id="insertStudentCourse" parameterType="raisetech.studentManagement.date.StudentCourse">
+  <insert id="insertStudentCourse" parameterType="raisetech.studentManagement.date.StudentCourse" useGeneratedKeys="true" keyProperty="id">
     INSERT INTO students_courses (student_id, course, start_date, expected_completion_date)
     VALUES (#{studentId}, #{course}, #{startDate}, #{expectedCompletionDate})
-    <selectKey keyProperty="id" resultType="int" order="AFTER">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
   </insert>
 
   <!-- 受講生の更新 -->
