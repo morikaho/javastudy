@@ -62,8 +62,6 @@ public class StudentService {
 
     repository.insertStudent(student);
 
-    student.setId(String.valueOf(student.getId()));
-
     studentDetail.getStudentCourseList().forEach(studentCourse -> {
       initStudentCourse(studentCourse, student.getId());
       repository.insertStudentCourse(studentCourse);
@@ -75,7 +73,7 @@ public class StudentService {
    * 受講生コース情報を登録する際の初期情報を設定する。
    *
    * @param studentCourse 受講生コース情報
-   * @param id 受講生ID
+   * @param id            受講生ID
    */
   void initStudentCourse(StudentCourse studentCourse, String id) {
     final LocalDate now = LocalDate.now();

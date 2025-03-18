@@ -51,7 +51,7 @@ class StudentConverterTest {
     assertThat(actual.get(0).getStudentCourseList()).isEmpty();
   }
 
-  private static Student createStudent() {
+  private Student createStudent() {
     Student student = new Student("100", "渡辺　恵子", "わたなべ　けいこ", "けいこ",
         "unique.user1937@example.com", "東京都", 30, "女", "特になし", false);
     return student;
