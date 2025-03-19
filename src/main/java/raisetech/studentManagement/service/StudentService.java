@@ -73,7 +73,7 @@ public class StudentService {
    * 受講生コース情報を登録する際の初期情報を設定する。
    *
    * @param studentCourse 受講生コース情報
-   * @param id            受講生ID
+   * @param id 受講生ID
    */
   void initStudentCourse(StudentCourse studentCourse, String id) {
     final LocalDate now = LocalDate.now();
