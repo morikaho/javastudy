@@ -55,7 +55,7 @@ public interface StudentRepository {
   /**
    * 受講生コース情報を新規登録します。　IDに関しては自動採番を行う。
    *
-   * @param  studentCourse 受講生コース情報
+   * @param studentCourse 受講生コース情報
    */
   void insertStudentCourse(StudentCourse studentCourse);
 

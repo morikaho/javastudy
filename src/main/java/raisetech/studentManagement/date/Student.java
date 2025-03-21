@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Student {
 
   @Schema(description = "受講生ID", example = "1234")
@@ -54,6 +56,4 @@ public class Student {
 
   @Schema(description = "削除フラグ（true: 削除済み, false: 有効）", example = "false")
   private boolean isDeleted;
-
-
 }

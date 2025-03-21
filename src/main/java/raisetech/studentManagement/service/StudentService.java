@@ -61,6 +61,7 @@ public class StudentService {
     final Student student = studentDetail.getStudent();
 
     repository.insertStudent(student);
+
     studentDetail.getStudentCourseList().forEach(studentCourse -> {
       initStudentCourse(studentCourse, student.getId());
       repository.insertStudentCourse(studentCourse);
