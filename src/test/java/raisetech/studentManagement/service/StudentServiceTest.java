@@ -1,5 +1,6 @@
 package raisetech.studentManagement.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -65,6 +66,38 @@ class StudentServiceTest {
     verify(repository, times(1)).searchStudent(id);
     verify(repository, times(1)).searchStudentCourse(id);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  void 指定した条件での受講生の検索_リポジトリとコンバーターの処理が適切に呼び出せていること() {
+    Student student = new Student("1", "渡辺　恵子", "わたなべ　けいこ", "けいちゃん",
+        "unique.user1937@example.com", "東京都新宿区新宿", 30, "女", null, false);
+    List<Student> studentList = List.of(student);
+
+    StudentCourse studentCourse = new StudentCourse("1", "1", "デザインコース",
+        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"));
+    List<StudentCourse> studentCourseList = List.of(studentCourse);
+
+    List<String> idList = List.of("1");
+
+    StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
+    List<StudentDetail> expected = List.of(studentDetail);
+
+    when(repository.searchStudentsByCondition("1", "渡辺　恵子", "わたなべ", "けい",
+        "unique.user1937@example.com", "東京", 30, "女")).thenReturn(studentList);
+    when(repository.searchStudentCoursesByStudentIds(idList)).thenReturn(studentCourseList);
+    when(converter.convertStudentDetails(studentList, studentCourseList)).thenReturn(expected);
+
+    final List<StudentDetail> actual = sut.searchStudentsByCondition("1", "渡辺　恵子",
+        "わたなべ", "けい",
+        "unique.user1937@example.com", "東京", 30, "女");
+
+    verify(repository, times(1)).searchStudentsByCondition("1", "渡辺　恵子", "わたなべ", "けい",
+        "unique.user1937@example.com", "東京", 30, "女");
+    verify(repository, times(1)).searchStudentCoursesByStudentIds(idList);
+    verify(converter, times(1)).convertStudentDetails(studentList, studentCourseList);
+
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
