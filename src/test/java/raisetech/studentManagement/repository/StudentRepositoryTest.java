@@ -10,6 +10,7 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
+import raisetech.studentManagement.domain.CourseDetail;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -45,10 +46,25 @@ class StudentRepositoryTest {
     StudentCourse studentCourse1 = new StudentCourse("1", studentId, "JAVAコース",
         LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"));
     StudentCourse studentCourse2 = new StudentCourse("6", studentId, "AWSコース",
-        LocalDate.parse("2024-06-01"), LocalDate.parse("2024-09-01"));
+        LocalDate.parse("2025-06-01"), LocalDate.parse("2025-09-01"));
     List<StudentCourse> expected = List.of(studentCourse1, studentCourse2);
 
     final List<StudentCourse> actual = sut.searchStudentCourse(studentId);
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void 受講生IDに紐づく受講生コース詳細検索が行えること() {
+    String studentId = "1";
+    CourseDetail courseDetail1 = new CourseDetail(studentId, "1", "JAVAコース",
+        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"), 1, "受講終了");
+    CourseDetail courseDetail2 = new CourseDetail(studentId, "6", "AWSコース",
+        LocalDate.parse("2025-06-01"), LocalDate.parse("2025-09-01"), 6, "仮申込");
+
+    List<CourseDetail> expected = List.of(courseDetail1,courseDetail2);
+
+    final List<CourseDetail> actual = sut.searchCourseDetailsByStudentId(studentId);
 
     assertThat(actual).isEqualTo(expected);
   }

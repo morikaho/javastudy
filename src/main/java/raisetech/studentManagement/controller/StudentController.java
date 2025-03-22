@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.domain.StudentDetail;
 import raisetech.studentManagement.exception.TestException;
 import raisetech.studentManagement.service.StudentService;
@@ -73,6 +74,12 @@ public class StudentController {
       )
       @PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String id) {
     return service.searchStudent(id);
+  }
+
+  //受講生IDによる受講コース詳細情報の検索
+  @GetMapping("/course/{id}")
+  public List<CourseDetail> getCourses(@PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String id){
+    return service.searchCoursesByStudentId(id);
   }
 
   /**

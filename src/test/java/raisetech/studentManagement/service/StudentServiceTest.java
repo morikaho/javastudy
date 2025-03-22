@@ -1,5 +1,6 @@
 package raisetech.studentManagement.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.studentManagement.controller.converter.StudentConverter;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
+import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.domain.StudentDetail;
 import raisetech.studentManagement.repository.StudentRepository;
 
@@ -65,6 +67,21 @@ class StudentServiceTest {
     verify(repository, times(1)).searchStudent(id);
     verify(repository, times(1)).searchStudentCourse(id);
     assertEquals(expected, actual);
+  }
+
+  @Test
+  void 受講生コース詳細の検索_リポジトリの処理が適切に呼び出せていること(){
+    String id = "1";
+    CourseDetail courseDetail = new CourseDetail();
+    courseDetail.setStudentId(id);
+    List<CourseDetail> expected = List.of(courseDetail);
+
+    when(repository.searchCourseDetailsByStudentId(id)).thenReturn(expected);
+
+    final List<CourseDetail> actual = sut.searchCoursesByStudentId(id);
+
+    verify(repository, times(1)).searchCourseDetailsByStudentId(id);
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test

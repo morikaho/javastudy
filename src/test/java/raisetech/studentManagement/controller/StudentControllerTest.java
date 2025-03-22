@@ -96,6 +96,16 @@ class StudentControllerTest {
   }
 
   @Test
+  void 受講生コース詳細の検索ができて空で返ってくること() throws Exception {
+    String id = "100";
+    mockMvc.perform(get("/course/{id}", id))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).searchCoursesByStudentId(id);
+  }
+
+
+  @Test
   void 受講生詳細の登録ができて空の受講生詳細が返ってくること() throws Exception {
     //リクエストデータは適切に構築して入力チェックの検証も兼ねている。
     //本来であれば返りは登録されたデータが入るが、モック化すると意味がないため、レスポンスは作らない。

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.studentManagement.controller.converter.StudentConverter;
+import raisetech.studentManagement.date.ApplicationStatus;
+import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.domain.StudentDetail;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
@@ -48,6 +50,11 @@ public class StudentService {
     Student student = repository.searchStudent(id);
     List<StudentCourse> studentCourse = repository.searchStudentCourse(student.getId());
     return new StudentDetail(student, studentCourse);
+  }
+
+  //受講生IDに紐づくコース詳細の検索
+  public List<CourseDetail> searchCoursesByStudentId(String id){
+    return repository.searchCourseDetailsByStudentId(id);
   }
 
   /**

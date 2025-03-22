@@ -22,6 +22,21 @@
     SELECT * FROM students_courses WHERE student_id = #{studentId}
   </select>
 
+  <!-- 受講生IDで受講コース詳細の検索　-->
+  <select id="searchCourseDetailsByStudentId" parameterType="String" resultType="raisetech.studentManagement.domain.CourseDetail">
+    SELECT
+    sc.id AS courseId,
+    sc.student_id,
+    sc.course,
+    sc.start_date,
+    sc.expected_completion_date,
+    as_table.id AS applicationStatusId,
+    as_table.application_status
+    FROM students_courses sc
+    JOIN application_status as_table ON sc.id = as_table.course_id
+    WHERE sc.student_id = #{studentId};
+  </select>
+
   <!-- 受講生の登録 -->
   <insert id="insertStudent" parameterType="raisetech.studentManagement.date.Student" useGeneratedKeys="true" keyProperty="id">
     INSERT INTO students (full_name, furigana, nick_name, email_address, area, age, sex, remark,
