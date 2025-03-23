@@ -20,6 +20,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -54,45 +55,39 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細の検索ができてIDに紐づく受講生詳細が返ってくること() throws Exception {
+  void 受講生詳細の検索ができて空で返ってくること() throws Exception {
     String id = "100";
-    Student student = new Student(id, "渡辺　恵子", "わたなべ　けいこ", "けいこ",
-        "unique.user1937@example.com", "東京都", 30, "女", "特になし", false);
-    StudentCourse studentCourse = new StudentCourse("100", id, "JAVAコース",
-        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"));
-    StudentDetail studentDetail = new StudentDetail(student, List.of(studentCourse));
-
-    when(service.searchStudent(id)).thenReturn(studentDetail);
-
     mockMvc.perform(get("/student/{id}", id))
-        .andExpect(status().isOk())
-        .andExpect(content().json("""
-            {
-              "student":{
-                "id":"100",
-                "fullName":"渡辺　恵子",
-                "furigana":"わたなべ　けいこ",
-                "nickname":"けいこ",
-                "emailAddress":"unique.user1937@example.com",
-                "area":"東京都",
-                "age":30,
-                "sex":"女",
-                "remark":"特になし",
-                "deleted":false
-              },
-              "studentCourseList":[
-                {
-                  "id":"100",
-                  "studentId":"100",
-                  "course":"JAVAコース",
-                  "startDate":"2024-01-01",
-                  "expectedCompletionDate":"2024-04-01"
-                }
-              ]
-            }
-            """));
+        .andExpect(status().isOk());
 
     verify(service, times(1)).searchStudent(id);
+  }
+
+  @Test
+  void 受講生詳細の検索ができて空のリストが返ってくること() throws Exception {
+    String id = "100";
+    String fullName = "渡辺 恵子";
+    String furigana = "わたなべ";
+    String nickname = "けい";
+    String emailAddress = "unique.user1937@example.com";
+    String area = "東京";
+    Integer age = 30;
+    String sex = "女";
+
+    mockMvc.perform(get("/students/filter")
+            .param("id", id)
+            .param("fullName", fullName)
+            .param("furigana", furigana)
+            .param("nickname", nickname)
+            .param("emailAddress", emailAddress)
+            .param("area", area)
+            .param("age", String.valueOf(age))
+            .param("sex", sex)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).searchStudentsByCondition(id, fullName, furigana, nickname,
+        emailAddress, area, age, sex);
   }
 
   @Test

@@ -7,9 +7,38 @@
     SELECT * FROM students
   </select>
 
-  <!-- 受講生の検索　-->
+  <!-- 受講生IDで受講生の検索　-->
   <select id="searchStudent" resultType="raisetech.studentManagement.date.Student">
     SELECT * FROM students WHERE id = #{id}
+  </select>
+
+  <!-- 条件を指定して受講生の検索　-->
+  <select id="searchStudentsByCondition" resultType="raisetech.studentManagement.date.Student">
+    SELECT * FROM students WHERE 1=1
+    <if test="id != null and id != ''">
+      AND id = #{id}
+    </if>
+    <if test="fullName != null and fullName != ''">
+      AND full_name LIKE CONCAT('%', #{fullName}, '%')
+    </if>
+    <if test="furigana != null and furigana != ''">
+      AND furigana LIKE CONCAT('%', #{furigana}, '%')
+    </if>
+    <if test="nickname != null and nickname != ''">
+      AND nick_name LIKE CONCAT('%', #{nickname}, '%')
+    </if>
+    <if test="emailAddress != null and emailAddress != ''">
+      AND email_address LIKE CONCAT('%', #{emailAddress}, '%')
+    </if>
+    <if test="area != null and area != ''">
+      AND area LIKE CONCAT('%', #{area}, '%')
+    </if>
+    <if test="age != null and age != ''">
+      AND age = #{age}
+    </if>
+    <if test="sex != null and sex != ''">
+      AND sex = #{sex}
+    </if>
   </select>
 
   <!-- 受講生コース情報の全件検索　-->
@@ -17,9 +46,17 @@
     SELECT * FROM students_courses
   </select>
 
-  <!-- 受講生コース情報の検索　-->
+  <!-- 一件の受講生IDで受講生コース情報の検索　-->
   <select id="searchStudentCourse" resultType="raisetech.studentManagement.date.StudentCourse">
-    SELECT * FROM students_courses WHERE student_id = #{studentId}
+    SELECT * FROM students_courses WHERE student_id =#{studentId}
+  </select>
+
+  <!-- 複数の受講生IDで受講生コース情報の検索　-->
+  <select id="searchStudentCoursesByStudentIds" parameterType="list" resultType="raisetech.studentManagement.date.StudentCourse">
+    SELECT * FROM students_courses WHERE student_id IN
+    <foreach item="studentId" collection="list" open="(" separator="," close=")">
+      #{studentId}
+    </foreach>
   </select>
 
   <!-- 受講生の登録 -->
