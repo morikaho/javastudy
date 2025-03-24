@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import raisetech.studentManagement.date.ApplicationStatus;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
 import raisetech.studentManagement.domain.CourseDetail;
@@ -59,10 +60,8 @@ class StudentRepositoryTest {
     String studentId = "1";
     CourseDetail courseDetail1 = new CourseDetail(studentId, "1", "JAVAコース",
         LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"), 1, "受講終了");
-    CourseDetail courseDetail2 = new CourseDetail(studentId, "6", "AWSコース",
-        LocalDate.parse("2025-06-01"), LocalDate.parse("2025-09-01"), 6, "仮申込");
 
-    List<CourseDetail> expected = List.of(courseDetail1,courseDetail2);
+    List<CourseDetail> expected = List.of(courseDetail1);
 
     final List<CourseDetail> actual = sut.searchCourseDetailsByStudentId(studentId);
 
@@ -102,6 +101,21 @@ class StudentRepositoryTest {
     final List<StudentCourse> actual = sut.searchStudentCourseList();
 
     assertThat(actual.size()).isEqualTo(7);
+  }
+
+  @Test
+  void 申込状況の登録が行えること() {
+    ApplicationStatus applicationStatus = new ApplicationStatus();
+    applicationStatus.setCourseId("6");
+    applicationStatus.setApplicationStatus("仮申込");
+
+    sut.insertApplicationStatus(applicationStatus);
+
+    final List<CourseDetail> actual = sut.searchCourseDetailsByStudentId("1");
+
+    assertThat(actual.get(1).getCourseId()).isEqualTo("6");
+    assertThat(actual.get(1).getApplicationStatusId()).isEqualTo(6);
+    assertThat(actual.get(1).getApplicationStatus()).isEqualTo("仮申込");
   }
 
   @Test

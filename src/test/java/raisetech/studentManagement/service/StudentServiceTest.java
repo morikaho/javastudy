@@ -15,10 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.studentManagement.controller.converter.StudentConverter;
+import raisetech.studentManagement.date.ApplicationStatus;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
 import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.domain.StudentDetail;
+import raisetech.studentManagement.domain.StudentRegistrationResult;
 import raisetech.studentManagement.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +72,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生コース詳細の検索_リポジトリの処理が適切に呼び出せていること(){
+  void 受講生コース詳細の検索_リポジトリの処理が適切に呼び出せていること() {
     String id = "1";
     CourseDetail courseDetail = new CourseDetail();
     courseDetail.setStudentId(id);
@@ -88,13 +90,18 @@ class StudentServiceTest {
   void 受講生詳細の登録_リポジトリの処理が適切に呼び出せていること() {
     Student student = new Student();
     StudentCourse studentCourse = new StudentCourse();
-    List<StudentCourse> studentCourseList = new ArrayList<>(List.of(studentCourse));
-    StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
+    List<StudentCourse> studentCourseList = List.of(studentCourse);
+    ApplicationStatus applicationStatus = new ApplicationStatus();
+    List<ApplicationStatus> applicationStatusList = List.of(applicationStatus);
 
-    sut.registerStudent(studentDetail);
+    StudentRegistrationResult studentRegistrationResult = new StudentRegistrationResult(student,
+        studentCourseList, applicationStatusList);
+
+    sut.registerStudent(studentRegistrationResult);
 
     verify(repository, times(1)).insertStudent(student);
     verify(repository, times(1)).insertStudentCourse(studentCourse);
+    verify(repository, times(1)).insertApplicationStatus(applicationStatus);
   }
 
   @Test

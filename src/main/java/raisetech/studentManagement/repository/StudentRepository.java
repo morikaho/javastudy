@@ -65,6 +65,9 @@ public interface StudentRepository {
    */
   void insertStudentCourse(StudentCourse studentCourse);
 
+  //申込状況の登録 id自動
+  void insertApplicationStatus(ApplicationStatus applicationStatus);
+
   /**
    * 受講生を更新します。
    *

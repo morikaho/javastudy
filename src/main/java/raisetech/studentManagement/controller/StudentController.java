@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.domain.StudentDetail;
+import raisetech.studentManagement.domain.StudentRegistrationResult;
 import raisetech.studentManagement.exception.TestException;
 import raisetech.studentManagement.service.StudentService;
 
@@ -83,17 +84,17 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の登録を行います。
    *
-   * @param studentDetail 　受講生詳細
-   * @return 実行結果
+   * @param studentRegistrationResult
+   * @return
    */
   @Operation(summary = "受講生登録", description = "受講生を登録します。")
   @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(
-      @RequestBody @Valid StudentDetail studentDetail) {
-    StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
+  public ResponseEntity<StudentRegistrationResult> registerStudent(
+      @RequestBody StudentRegistrationResult studentRegistrationResult) {
+    final StudentRegistrationResult responseStudentRegistrationResult = service.registerStudent(
+        studentRegistrationResult);
+    return ResponseEntity.ok(responseStudentRegistrationResult);
   }
 
   /**

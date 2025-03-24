@@ -68,27 +68,27 @@ class StudentControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().json("""
             {
-              "student":{
-                "id":"100",
-                "fullName":"渡辺　恵子",
-                "furigana":"わたなべ　けいこ",
-                "nickname":"けいこ",
-                "emailAddress":"unique.user1937@example.com",
-                "area":"東京都",
-                "age":30,
-                "sex":"女",
-                "remark":"特になし",
-                "deleted":false
-              },
-              "studentCourseList":[
-                {
-                  "id":"100",
-                  "studentId":"100",
-                  "course":"JAVAコース",
-                  "startDate":"2024-01-01",
-                  "expectedCompletionDate":"2024-04-01"
-                }
-              ]
+                "student": {
+                    "id": "100",
+                    "fullName": "渡辺　恵子",
+                    "furigana": "わたなべ　けいこ",
+                    "nickname": "けいこ",
+                    "emailAddress": "unique.user1937@example.com",
+                    "area": "東京都",
+                    "age": 30,
+                    "sex": "女",
+                    "remark": "特になし",
+                    "deleted": false
+                },
+                "studentCourseList": [
+                    {
+                        "id": "100",
+                        "studentId": "100",
+                        "course": "JAVAコース",
+                        "startDate": "2024-01-01",
+                        "expectedCompletionDate": "2024-04-01"
+                    }
+                ]
             }
             """));
 
@@ -113,20 +113,27 @@ class StudentControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {
-                  "student":{
-                    "fullName":"渡辺　恵子",
-                    "furigana":"わたなべ　けいこ",
-                    "nickname":"けいこ",
-                    "emailAddress":"unique.user1937@example.com",
-                    "area":"東京都",
-                    "age":30,
-                    "sex":"女"
-                  },
-                  "studentCourseList":[
-                    {
-                      "course":"JAVAコース"
-                    }
-                  ]
+                    "student":{
+                        "fullName":"山田 ゆうな",
+                        "furigana":"やまだ　ゆうな",
+                        "nickname":"ゆうちゃん",
+                        "emailAddress":"yuuna.yamada.321@example.com",
+                        "area":"兵庫県",
+                        "age":"32",
+                        "sex":"女",
+                        "remark":"特になし"
+                    },
+                    "studentCourseList":[
+                        {
+                            "course":"デザインコース",
+                            "startDate":"2025-02-01"
+                        }
+                    ],
+                    "applicationStatusList":[
+                        {
+                            "applicationStatus":"仮申込"
+                        }
+                    ]
                 }
                 """))
         .andExpect(status().isOk());

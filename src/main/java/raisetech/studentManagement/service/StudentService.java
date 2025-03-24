@@ -2,6 +2,7 @@ package raisetech.studentManagement.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.domain.StudentDetail;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
+import raisetech.studentManagement.domain.StudentRegistrationResult;
 import raisetech.studentManagement.repository.StudentRepository;
 
 /**
@@ -53,7 +55,7 @@ public class StudentService {
   }
 
   //受講生IDに紐づくコース詳細の検索
-  public List<CourseDetail> searchCoursesByStudentId(String id){
+  public List<CourseDetail> searchCoursesByStudentId(String id) {
     return repository.searchCourseDetailsByStudentId(id);
   }
 
@@ -64,30 +66,38 @@ public class StudentService {
    * @return 登録情報を付与した受講生詳細
    */
   @Transactional
-  public StudentDetail registerStudent(StudentDetail studentDetail) {
-    final Student student = studentDetail.getStudent();
+  public StudentRegistrationResult registerStudent(
+      StudentRegistrationResult studentRegistrationResult) {
+    final Student student = studentRegistrationResult.getStudent();
 
     repository.insertStudent(student);
 
-    studentDetail.getStudentCourseList().forEach(studentCourse -> {
+    studentRegistrationResult.getStudentCourseList().forEach(studentCourse -> {
       initStudentCourse(studentCourse, student.getId());
       repository.insertStudentCourse(studentCourse);
     });
-    return studentDetail;
+
+    List<StudentCourse> studentCourseList = studentRegistrationResult.getStudentCourseList();
+    List<ApplicationStatus> applicationStatusList = studentRegistrationResult.getApplicationStatusList();
+    IntStream.range(0, Math.min(applicationStatusList.size(), studentCourseList.size()))
+        .forEach(i -> {
+          applicationStatusList.get(i).setCourseId(studentCourseList.get(i).getId());
+          repository.insertApplicationStatus(applicationStatusList.get(i));
+        });
+
+    return studentRegistrationResult;
   }
 
   /**
    * 受講生コース情報を登録する際の初期情報を設定する。
    *
    * @param studentCourse 受講生コース情報
-   * @param id 受講生ID
+   * @param id            受講生ID
    */
   void initStudentCourse(StudentCourse studentCourse, String id) {
-    final LocalDate now = LocalDate.now();
-
+    //開始日を指定して入力、終了日を一年後に自動設定
     studentCourse.setStudentId(id);
-    studentCourse.setStartDate(now);
-    studentCourse.setExpectedCompletionDate(now.plusYears(1));
+    studentCourse.setExpectedCompletionDate(studentCourse.getStartDate().plusYears(1));
   }
 
   /**
