@@ -1,5 +1,6 @@
 package raisetech.studentManagement.date;
 
+import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class ApplicationStatus {
 
-  private int id;
+  private Integer id;
 
   private String courseId;
 

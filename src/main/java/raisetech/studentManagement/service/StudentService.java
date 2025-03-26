@@ -59,45 +59,42 @@ public class StudentService {
     return repository.searchCourseDetailsByStudentId(id);
   }
 
-  /**
-   * 受講生詳細の登録を行います。 受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値とコース開始日、コース終了日を設定します。
-   *
-   * @param studentDetail 受講生詳細
-   * @return 登録情報を付与した受講生詳細
-   */
+  //受講生とコース詳細登録
   @Transactional
   public StudentRegistrationResult registerStudent(
       StudentRegistrationResult studentRegistrationResult) {
     final Student student = studentRegistrationResult.getStudent();
+    final CourseDetail courseDetail = studentRegistrationResult.getCourseDetail();
 
     repository.insertStudent(student);
 
-    studentRegistrationResult.getStudentCourseList().forEach(studentCourse -> {
-      initStudentCourse(studentCourse, student.getId());
-      repository.insertStudentCourse(studentCourse);
-    });
+    CourseDetail courseDetail1 = new CourseDetail(student.getId(), null, courseDetail.getCourse(),
+        courseDetail.getStartDate(), courseDetail.getExpectedCompletionDate(), null,
+        courseDetail.getApplicationStatus());
 
-    List<StudentCourse> studentCourseList = studentRegistrationResult.getStudentCourseList();
-    List<ApplicationStatus> applicationStatusList = studentRegistrationResult.getApplicationStatusList();
-    IntStream.range(0, Math.min(applicationStatusList.size(), studentCourseList.size()))
-        .forEach(i -> {
-          applicationStatusList.get(i).setCourseId(studentCourseList.get(i).getId());
-          repository.insertApplicationStatus(applicationStatusList.get(i));
-        });
+    final CourseDetail responseCourseDetail = registerCourse(courseDetail1);
 
+    studentRegistrationResult.setCourseDetail(responseCourseDetail);
     return studentRegistrationResult;
   }
 
-  /**
-   * 受講生コース情報を登録する際の初期情報を設定する。
-   *
-   * @param studentCourse 受講生コース情報
-   * @param id            受講生ID
-   */
-  void initStudentCourse(StudentCourse studentCourse, String id) {
-    //開始日を指定して入力、終了日を一年後に自動設定
-    studentCourse.setStudentId(id);
-    studentCourse.setExpectedCompletionDate(studentCourse.getStartDate().plusYears(1));
+  //コース詳細登録
+  @Transactional
+  public CourseDetail registerCourse(CourseDetail courseDetail) {
+    StudentCourse studentCourse = new StudentCourse(null, courseDetail.getStudentId(),
+        courseDetail.getCourse(), courseDetail.getStartDate(),
+        courseDetail.getExpectedCompletionDate());
+    repository.insertStudentCourse(studentCourse);
+
+    ApplicationStatus applicationStatus = new ApplicationStatus(null, studentCourse.getId(),
+        courseDetail.getApplicationStatus());
+    repository.insertApplicationStatus(applicationStatus);
+
+    CourseDetail responseCourseDetail = new CourseDetail(studentCourse.getStudentId(),
+        studentCourse.getId(), studentCourse.getCourse(), studentCourse.getStartDate(),
+        studentCourse.getExpectedCompletionDate(), applicationStatus.getId(),
+        applicationStatus.getApplicationStatus());
+    return responseCourseDetail;
   }
 
   /**

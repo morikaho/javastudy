@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.crypto.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,34 +90,24 @@ class StudentServiceTest {
   @Test
   void 受講生詳細の登録_リポジトリの処理が適切に呼び出せていること() {
     Student student = new Student();
-    StudentCourse studentCourse = new StudentCourse();
-    List<StudentCourse> studentCourseList = List.of(studentCourse);
-    ApplicationStatus applicationStatus = new ApplicationStatus();
-    List<ApplicationStatus> applicationStatusList = List.of(applicationStatus);
-
-    StudentRegistrationResult studentRegistrationResult = new StudentRegistrationResult(student,
-        studentCourseList, applicationStatusList);
+    CourseDetail courseDetail = new CourseDetail();
+    StudentRegistrationResult studentRegistrationResult = new StudentRegistrationResult(student,courseDetail);
 
     sut.registerStudent(studentRegistrationResult);
 
     verify(repository, times(1)).insertStudent(student);
-    verify(repository, times(1)).insertStudentCourse(studentCourse);
-    verify(repository, times(1)).insertApplicationStatus(applicationStatus);
   }
 
   @Test
-  void 受講生の登録_受講生コース情報の初期情報の設定が適切に行われていること() {
-    String id = "100";
-    Student student = new Student();
-    student.setId(id);
+  void 受講コース詳細の登録_リポジトリの処理が適切に呼び出せていること(){
     StudentCourse studentCourse = new StudentCourse();
-    LocalDate now = LocalDate.now();
+    ApplicationStatus applicationStatus = new ApplicationStatus();
+    CourseDetail courseDetail = new CourseDetail();
 
-    sut.initStudentCourse(studentCourse, student.getId());
+    sut.registerCourse(courseDetail);
 
-    assertEquals(id, studentCourse.getStudentId());
-    assertEquals(now, studentCourse.getStartDate());
-    assertEquals(now.plusYears(1), studentCourse.getExpectedCompletionDate());
+    verify(repository,times(1)).insertStudentCourse(studentCourse);
+    verify(repository,times(1)).insertApplicationStatus(applicationStatus);
   }
 
   @Test

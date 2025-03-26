@@ -70,4 +70,9 @@
   <update id="updateStudentCourse" parameterType="raisetech.studentManagement.date.StudentCourse">
     UPDATE students_courses SET course = #{course} WHERE id = #{id}
   </update>
+
+  <!-- 申込状況の更新 -->
+  <update id="updateApplicationStatus" parameterType="raisetech.studentManagement.date.ApplicationStatus">
+    UPDATE application_status SET course = #{course} WHERE course_id = #{id}
+  </update>
 </mapper>

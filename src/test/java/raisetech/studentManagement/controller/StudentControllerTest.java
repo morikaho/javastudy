@@ -114,31 +114,44 @@ class StudentControllerTest {
             .content("""
                 {
                     "student":{
-                        "fullName":"山田 ゆうな",
-                        "furigana":"やまだ　ゆうな",
-                        "nickname":"ゆうちゃん",
-                        "emailAddress":"yuuna.yamada.321@example.com",
-                        "area":"兵庫県",
-                        "age":"32",
-                        "sex":"女",
-                        "remark":"特になし"
+                        "fullName": "渡辺　恵子",
+                        "furigana": "わたなべ　けいこ",
+                        "nickname": "けいこ",
+                        "emailAddress": "unique.user1937@example.com",
+                        "area": "東京都",
+                        "age": 30,
+                        "sex": "女",
+                        "remark": "特になし"
                     },
-                    "studentCourseList":[
-                        {
-                            "course":"デザインコース",
-                            "startDate":"2025-02-01"
-                        }
-                    ],
-                    "applicationStatusList":[
-                        {
-                            "applicationStatus":"仮申込"
-                        }
-                    ]
+                    "courseDetail":{
+                        "course": "JAVAコース",
+                        "startDate": "2025-01-01",
+                        "expectedCompletionDate": "2026-01-01",
+                        "applicationStatus":"仮申込"
+                    }
+                }
+               """))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).registerStudent(any());
+  }
+
+  @Test
+  void 受講コース詳細の登録ができて空の受講コース詳細が返ってくること() throws Exception {
+    mockMvc.perform(post("/registerCourse")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {
+                    "studentId": "100",
+                    "course": "JAVAコース",
+                    "startDate": "2025-01-01",
+                    "expectedCompletionDate": "2026-01-01",
+                    "applicationStatus": "仮申込"
                 }
                 """))
         .andExpect(status().isOk());
 
-    verify(service, times(1)).registerStudent(any());
+    verify(service, times(1)).registerCourse(any());
   }
 
   @Test

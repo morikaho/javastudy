@@ -24,7 +24,7 @@ public class CourseDetail {
 
   private LocalDate expectedCompletionDate;
 
-  private int applicationStatusId;
+  private Integer applicationStatusId;
 
   private String applicationStatus;
 }

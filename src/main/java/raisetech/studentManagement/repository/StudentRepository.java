@@ -75,12 +75,11 @@ public interface StudentRepository {
    */
   void updateStudent(Student student);
 
-  /**
-   * 受講生コース情報のコース名を更新します。
-   *
-   * @param studentCourse 受講生コース情報
-   */
+  //コースの更新
   void updateStudentCourse(StudentCourse studentCourse);
+
+  //申込状況の更新
+  void updateApplicationStatus(ApplicationStatus applicationStatus);
 }
 
 

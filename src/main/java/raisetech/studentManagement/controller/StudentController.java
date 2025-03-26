@@ -83,6 +83,7 @@ public class StudentController {
     return service.searchCoursesByStudentId(id);
   }
 
+  //受講生情報とコース詳細登録
   /**
    *
    * @param studentRegistrationResult
@@ -97,6 +98,12 @@ public class StudentController {
     return ResponseEntity.ok(responseStudentRegistrationResult);
   }
 
+  //コース詳細登録
+  @PostMapping("/registerCourse")
+  public  ResponseEntity<CourseDetail> registerCourse(@RequestBody CourseDetail courseDetail){
+    final CourseDetail ResponsecourseDetail = service.registerCourse(courseDetail);
+    return  ResponseEntity.ok(ResponsecourseDetail);
+  }
   /**
    * 受講生詳細の更新を行います。キャンセルフラグの更新もここで行います。（論理削除）
    *
