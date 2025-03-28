@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -112,25 +113,25 @@ class StudentControllerTest {
     mockMvc.perform(post("/registerStudent")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
-                {
-                    "student":{
-                        "fullName": "渡辺　恵子",
-                        "furigana": "わたなべ　けいこ",
-                        "nickname": "けいこ",
-                        "emailAddress": "unique.user1937@example.com",
-                        "area": "東京都",
-                        "age": 30,
-                        "sex": "女",
-                        "remark": "特になし"
-                    },
-                    "courseDetail":{
-                        "course": "JAVAコース",
-                        "startDate": "2025-01-01",
-                        "expectedCompletionDate": "2026-01-01",
-                        "applicationStatus":"仮申込"
-                    }
-                }
-               """))
+                 {
+                     "student":{
+                         "fullName": "渡辺　恵子",
+                         "furigana": "わたなべ　けいこ",
+                         "nickname": "けいこ",
+                         "emailAddress": "unique.user1937@example.com",
+                         "area": "東京都",
+                         "age": 30,
+                         "sex": "女",
+                         "remark": "特になし"
+                     },
+                     "courseDetail":{
+                         "course": "JAVAコース",
+                         "startDate": "2025-01-01",
+                         "expectedCompletionDate": "2026-01-01",
+                         "applicationStatus":"仮申込"
+                     }
+                 }
+                """))
         .andExpect(status().isOk());
 
     verify(service, times(1)).registerStudent(any());
@@ -155,28 +156,19 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細の更新ができて適切なメッセージが返ってくること() throws Exception {
+  void 受講生の更新ができて適切なメッセージが返ってくること() throws Exception {
     mockMvc.perform(put("/updateStudent")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {
-                  "student":{
-                    "id":"100",
-                    "fullName":"渡辺　恵子",
-                    "furigana":"わたなべ　けいこ",
-                    "nickname":"けいこ",
-                    "emailAddress":"unique.user1937@example.com",
-                    "area":"東京都",
-                    "age":30,
-                    "sex":"女"
-                  },
-                  "studentCourseList":[
-                    {
-                      "id":"100",
-                      "studentId":"100",
-                      "course":"JAVAコース"
-                    }
-                  ]
+                    "id": "100",
+                    "fullName": "渡辺 恵子",
+                    "furigana": "わたなべ けいこ",
+                    "nickname": "けいこ",
+                    "emailAddress": "unique.user1937@example.com",
+                    "area": "東京都",
+                    "age": 30,
+                    "sex": "女"
                 }
                 """))
         .andExpect(status().isOk())
@@ -184,6 +176,38 @@ class StudentControllerTest {
 
     verify(service, times(1)).updateStudent(any());
   }
+
+  @Test
+  void 受講コース詳細の更新ができて適切なメッセージが返ってくること() throws Exception {
+    mockMvc.perform(put("/updateCourse")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {
+                    "studentId": "100",
+                    "courseId": "1",
+                    "course": "JAVAコース",
+                    "startDate": "2024-01-01",
+                    "expectedCompletionDate": "2025-01-01",
+                    "applicationStatusId": 1,
+                    "applicationStatus": "受講終了"
+                }
+                """))
+        .andExpect(status().isOk())
+        .andExpect(content().string("更新処理が成功しました。"));
+
+    verify(service, times(1)).updateCourse(any());
+  }
+
+  @Test
+  void 受講生コース詳細の削除ができて適切なメッセージが返ってくること() throws Exception {
+    String courseId = "100";
+    mockMvc.perform(delete("/deleteCourse/{courseId}", courseId))
+        .andExpect(status().isOk())
+        .andExpect(content().string("削除処理が成功しました。"));
+
+    verify(service, times(1)).deleteCourse(courseId);
+  }
+
 
   @Test
   void studentsで検索をした際適切なエラーメッセージが返ってくること() throws Exception {

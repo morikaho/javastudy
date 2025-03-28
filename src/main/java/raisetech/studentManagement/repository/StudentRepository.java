@@ -80,6 +80,13 @@ public interface StudentRepository {
 
   //申込状況の更新
   void updateApplicationStatus(ApplicationStatus applicationStatus);
+
+  //コースの削除
+  void deleteStudentCourse(String courseId);
+
+  //申し込み状況の削除
+  void deleteApplicationStatus(String courseId);
+
 }
 
 

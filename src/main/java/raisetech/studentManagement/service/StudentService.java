@@ -97,15 +97,30 @@ public class StudentService {
     return responseCourseDetail;
   }
 
-  /**
-   * 受講生の更新を行います。 受講生と受講生コース情報をそれぞれ更新します。
-   *
-   * @param studentDetail 受講生詳細
-   */
+  //受講生の更新
   @Transactional
-  public void updateStudent(StudentDetail studentDetail) {
-    repository.updateStudent(studentDetail.getStudent());
-    studentDetail.getStudentCourseList()
-        .forEach(studentCourse -> repository.updateStudentCourse(studentCourse));
+  public void updateStudent(Student student) {
+    repository.updateStudent(student);
+  }
+
+  //受講コース詳細の更新
+  @Transactional
+  public void updateCourse(CourseDetail courseDetail) {
+    StudentCourse studentCourse = new StudentCourse(courseDetail.getCourseId(),
+        courseDetail.getStudentId(), courseDetail.getCourse(), courseDetail.getStartDate(),
+        courseDetail.getExpectedCompletionDate());
+    repository.updateStudentCourse(studentCourse);
+
+    ApplicationStatus applicationStatus = new ApplicationStatus(
+        courseDetail.getApplicationStatusId(), courseDetail.getCourseId(),
+        courseDetail.getApplicationStatus());
+    repository.updateApplicationStatus(applicationStatus);
+  }
+
+  //受講コース詳細の削除
+  @Transactional
+  public void deleteCourse(String courseId){
+    repository.deleteStudentCourse(courseId);
+    repository.deleteApplicationStatus(courseId);
   }
 }

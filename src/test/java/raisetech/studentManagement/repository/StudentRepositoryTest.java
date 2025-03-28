@@ -5,7 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.studentManagement.date.ApplicationStatus;
@@ -132,19 +135,56 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コース情報の名前の更新が行えること() {
-    String studentId = "1";
+  void 受講生コース情報の更新が行えること() {
     String courseId = "1";
+    String studentId = "1";
     StudentCourse expected = new StudentCourse(courseId, studentId, "デザインコース",
-        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"));
+        LocalDate.parse("2025-01-01"), LocalDate.parse("2026-04-01"));
 
     sut.updateStudentCourse(expected);
 
-    final List<StudentCourse> studentCourses = sut.searchStudentCourse(studentId);
-    List<StudentCourse> actual = studentCourses.stream()
-        .filter(course -> Objects.equals(course.getId(), courseId))
-        .toList();
+    final List<StudentCourse> actual = sut.searchStudentCourse(studentId);
 
     assertThat(actual.getFirst()).isEqualTo(expected);
+  }
+
+
+  @Test
+  void 受講コース申し込み状況の更新が行えること() {
+    ApplicationStatus expected = new ApplicationStatus(1, "1", "受講中");
+
+    sut.updateApplicationStatus(expected);
+
+    final List<CourseDetail> courseDetail = sut.searchCourseDetailsByStudentId("1");
+    final CourseDetail first = courseDetail.getFirst();
+    ApplicationStatus actual = new ApplicationStatus(first.getApplicationStatusId(),
+        first.getCourseId(), first.getApplicationStatus());
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void 受講コース情報の削除が行えること() {
+    String courseId = "1";
+    String studentId = "1";
+
+    sut.deleteApplicationStatus(courseId);
+    sut.deleteStudentCourse(courseId);
+
+    final List<CourseDetail> actual = sut.searchCourseDetailsByStudentId(studentId);
+
+    assertThat(actual).isEmpty();
+  }
+
+  @Test
+  void 受講コース詳細の削除が行えること(){
+    String courseId = "1";
+    String studentId = "1";
+
+    sut.deleteApplicationStatus(courseId);
+
+    final List<CourseDetail> actual = sut.searchCourseDetailsByStudentId(studentId);
+
+    assertThat(actual).isEmpty();
   }
 }

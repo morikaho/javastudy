@@ -8,10 +8,9 @@ import jakarta.validation.constraints.Pattern;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.domain.StudentDetail;
 import raisetech.studentManagement.domain.StudentRegistrationResult;
@@ -104,17 +104,29 @@ public class StudentController {
     final CourseDetail ResponsecourseDetail = service.registerCourse(courseDetail);
     return  ResponseEntity.ok(ResponsecourseDetail);
   }
-  /**
-   * 受講生詳細の更新を行います。キャンセルフラグの更新もここで行います。（論理削除）
-   *
-   * @param studentDetail 受講生詳細
-   * @return 実行結果
-   */
+
+  //受講生の更新
   @Operation(summary = "受講生更新", description = "受講生を更新します。")
   @PutMapping("/updateStudent")
   public ResponseEntity<String> updateStudent(
-      @RequestBody @Valid StudentDetail studentDetail) {
-    service.updateStudent(studentDetail);
+      @RequestBody @Valid Student student) {
+    service.updateStudent(student);
     return ResponseEntity.ok("更新処理が成功しました。");
+  }
+
+    //受講コース詳細の更新
+    @PutMapping("/updateCourse")
+    public ResponseEntity<String> updateCourse(
+        @RequestBody  CourseDetail courseDetail) {
+      service.updateCourse(courseDetail);
+      return ResponseEntity.ok("更新処理が成功しました。");
+  }
+
+  //受講コース詳細の削除
+  @DeleteMapping("/deleteCourse/{courseId}")
+  public ResponseEntity<String> deleteCourse(
+      @PathVariable  String courseId) {
+    service.deleteCourse(courseId);
+    return ResponseEntity.ok("削除処理が成功しました。");
   }
 }

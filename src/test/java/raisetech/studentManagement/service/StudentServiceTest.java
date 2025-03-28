@@ -91,7 +91,8 @@ class StudentServiceTest {
   void 受講生詳細の登録_リポジトリの処理が適切に呼び出せていること() {
     Student student = new Student();
     CourseDetail courseDetail = new CourseDetail();
-    StudentRegistrationResult studentRegistrationResult = new StudentRegistrationResult(student,courseDetail);
+    StudentRegistrationResult studentRegistrationResult = new StudentRegistrationResult(student,
+        courseDetail);
 
     sut.registerStudent(studentRegistrationResult);
 
@@ -99,27 +100,47 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講コース詳細の登録_リポジトリの処理が適切に呼び出せていること(){
+  void 受講コース詳細の登録_リポジトリの処理が適切に呼び出せていること() {
     StudentCourse studentCourse = new StudentCourse();
     ApplicationStatus applicationStatus = new ApplicationStatus();
     CourseDetail courseDetail = new CourseDetail();
 
     sut.registerCourse(courseDetail);
 
-    verify(repository,times(1)).insertStudentCourse(studentCourse);
-    verify(repository,times(1)).insertApplicationStatus(applicationStatus);
+    verify(repository, times(1)).insertStudentCourse(studentCourse);
+    verify(repository, times(1)).insertApplicationStatus(applicationStatus);
   }
 
   @Test
   void 受講生の更新_リポジトリの処理が適切に呼び出せていること() {
     Student student = new Student();
+
+    sut.updateStudent(student);
+
+    verify(repository, times(1)).updateStudent(student);
+  }
+
+  @Test
+  void 受講コース詳細の更新＿リポジトリの処理が適切に呼び出せていること() {
     StudentCourse studentCourse = new StudentCourse();
-    List<StudentCourse> studentCourseList = new ArrayList<>(List.of(studentCourse));
-    StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
+    ApplicationStatus applicationStatus = new ApplicationStatus();
+    CourseDetail courseDetail = new CourseDetail(studentCourse.getStudentId(),
+        studentCourse.getId(), studentCourse.getCourse(), studentCourse.getStartDate(), studentCourse.getExpectedCompletionDate(),
+        applicationStatus.getId(), applicationStatus.getApplicationStatus());
 
-    sut.updateStudent(studentDetail);
+    sut.updateCourse(courseDetail);
 
-    verify(repository, times(1)).updateStudent(studentDetail.getStudent());
-    verify(repository, times(1)).updateStudentCourse(studentCourse);
+    verify(repository,times(1)).updateStudentCourse(studentCourse);
+    verify(repository,times(1)).updateApplicationStatus(applicationStatus);
+  }
+
+  @Test
+  void 受講コース詳細の削除_リポジトリの処理が適切に呼び出せていること(){
+    String courseId = "1";
+
+    sut.deleteCourse(courseId);
+
+    verify(repository,times(1)).deleteStudentCourse(courseId);
+    verify(repository,times(1)).deleteApplicationStatus(courseId);
   }
 }
