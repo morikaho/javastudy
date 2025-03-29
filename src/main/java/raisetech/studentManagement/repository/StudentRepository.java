@@ -2,6 +2,7 @@ package raisetech.studentManagement.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import raisetech.studentManagement.date.ApplicationStatus;
 
 import raisetech.studentManagement.date.Student;
@@ -68,7 +69,6 @@ public interface StudentRepository {
   List<StudentCourse> searchStudentCourseByStudentId(String studentId);
 
   /**
-
    * 受講生IDに紐づく受講生コース詳細を検索します。
    *
    * @param studentId 　受講生ID
@@ -76,10 +76,10 @@ public interface StudentRepository {
    */
   List<CourseDetail> searchCourseDetailsByStudentId(String studentId);
 
-
+  /**
    * 複数の受講生IDに紐づく受講生コース情報を検索します。
    *
-   * @param studentIds　受講生ID
+   * @param studentIds 　受講生ID
    * @return 複数の受講生IDに紐づく受講生コース情報
    */
   List<StudentCourse> searchStudentCoursesByStudentIds(@Param("list") List<String> studentIds);

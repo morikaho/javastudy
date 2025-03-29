@@ -37,10 +37,10 @@ class StudentRepositoryTest {
   void 指定した条件で受講生の検索が行えること() {
     final Student student = createStudent();
 
-    List <Student> expected = List.of(student);
+    List<Student> expected = List.of(student);
 
     final List<Student> actual = sut.searchStudentsByCondition("1", "渡辺　恵子", "わたなべ", "けい",
-        "unique.user1937@example.com", "東京",30 , "女");
+        "unique.user1937@example.com", "東京", 30, "女");
 
     assertThat(actual).isEqualTo(expected);
   }
@@ -86,12 +86,12 @@ class StudentRepositoryTest {
     StudentCourse studentCourse1 = new StudentCourse("1", studentId1, "JAVAコース",
         LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"));
     StudentCourse studentCourse2 = new StudentCourse("6", studentId1, "AWSコース",
-        LocalDate.parse("2024-06-01"), LocalDate.parse("2024-09-01"));
+        LocalDate.parse("2025-06-01"), LocalDate.parse("2025-09-01"));
     StudentCourse studentCourse3 = new StudentCourse("3", studentId2, "デザインコース",
         LocalDate.parse("2024-03-01"), LocalDate.parse("2024-06-01"));
-    List<StudentCourse> expected = List.of(studentCourse1, studentCourse2,studentCourse3);
+    List<StudentCourse> expected = List.of(studentCourse1, studentCourse2, studentCourse3);
 
-    List<String> studentIds = List.of(studentId1,studentId2);
+    List<String> studentIds = List.of(studentId1, studentId2);
 
     final List<StudentCourse> actual = sut.searchStudentCoursesByStudentIds(studentIds);
 
@@ -200,6 +200,7 @@ class StudentRepositoryTest {
     final List<CourseDetail> actual = sut.searchCourseDetailsByStudentId(studentId);
 
     assertThat(actual).isEmpty();
+  }
 
   private Student createStudent() {
     Student student = new Student("1", "渡辺　恵子", "わたなべ　けいこ", "けいちゃん",

@@ -159,6 +159,23 @@ public class StudentController {
   }
 
   /**
+   * 受講生コース詳細の検索です。受講生IDに紐づく任意の受講生コース詳細を取得します。
+   *
+   * @param id 受講生ID
+   * @return 受講生コース詳細
+   */
+  @Operation(summary = "コース検索", description = "受講生コース詳細を検索します。")
+  @GetMapping("/course/{id}")
+  public List<CourseDetail> getCoursesByStudentId(
+      @Parameter(
+          description = "受講生ID",
+          example = "1234"
+      )
+      @PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String id) {
+    return service.searchCoursesByStudentId(id);
+  }
+
+  /**
    * 受講生詳細の登録を行います。
    *
    * @param studentRegistrationResult 受講生詳細
@@ -183,8 +200,8 @@ public class StudentController {
   @PostMapping("/registerCourse")
   public ResponseEntity<CourseDetail> registerCourse(
       @RequestBody @Valid CourseDetail courseDetail) {
-    final CourseDetail ResponsecourseDetail = service.registerCourse(courseDetail);
-    return ResponseEntity.ok(ResponsecourseDetail);
+    final CourseDetail responsecourseDetail = service.registerCourse(courseDetail);
+    return ResponseEntity.ok(responsecourseDetail);
   }
 
   /**

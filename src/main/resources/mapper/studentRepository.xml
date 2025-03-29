@@ -50,6 +50,7 @@
   <select id="searchStudentCourseByStudentId"
     resultType="raisetech.studentManagement.date.StudentCourse">
     SELECT * FROM students_courses WHERE student_id = #{studentId}
+  </select>
 
   <!-- 一件の受講生IDで受講生コース情報の検索　-->
   <select id="searchStudentCourse" resultType="raisetech.studentManagement.date.StudentCourse">
@@ -57,7 +58,8 @@
   </select>
 
   <!-- 複数の受講生IDで受講生コース情報の検索　-->
-  <select id="searchStudentCoursesByStudentIds" parameterType="list" resultType="raisetech.studentManagement.date.StudentCourse">
+  <select id="searchStudentCoursesByStudentIds" parameterType="list"
+    resultType="raisetech.studentManagement.date.StudentCourse">
     SELECT * FROM students_courses WHERE student_id IN
     <foreach item="studentId" collection="list" open="(" separator="," close=")">
       #{studentId}

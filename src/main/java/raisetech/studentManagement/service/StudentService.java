@@ -1,7 +1,6 @@
 package raisetech.studentManagement.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,14 +68,16 @@ public class StudentService {
   public List<StudentDetail> searchStudentsByCondition(String id, String fullName, String furigana,
       String nickname,
       String emailAddress, String area, Integer age, String sex) {
-    final List<Student> studentList = repository.searchStudentsByCondition(id, fullName, furigana, nickname,
+    final List<Student> studentList = repository.searchStudentsByCondition(id, fullName, furigana,
+        nickname,
         emailAddress, area, age, sex);
 
     List<String> idList = studentList.stream()
         .map(Student::getId)
         .toList();
 
-    final List<StudentCourse> studentCourseList = repository.searchStudentCoursesByStudentIds(idList);
+    final List<StudentCourse> studentCourseList = repository.searchStudentCoursesByStudentIds(
+        idList);
 
     return converter.convertStudentDetails(studentList, studentCourseList);
   }
@@ -120,16 +121,15 @@ public class StudentService {
    */
   @Transactional
   public CourseDetail registerCourse(CourseDetail courseDetail) {
-    final StudentCourse studentCourse = createStudentCourse(courseDetail);
+    final StudentCourse studentCourse = courseDetail.converterToStudentCourse();
     repository.insertStudentCourse(studentCourse);
 
-    final ApplicationStatus applicationStatus = createApplicationStatus(courseDetail);
+    final ApplicationStatus applicationStatus = courseDetail.converterToApplicationStatus();
     repository.insertApplicationStatus(applicationStatus);
 
-    final CourseDetail responseCourseDetail = createCourseDetail(studentCourse, applicationStatus);
+    final CourseDetail responseCourseDetail = CourseDetail.of(studentCourse, applicationStatus);
     return responseCourseDetail;
   }
-
 
   /**
    * 受講生の更新を行います。
@@ -148,10 +148,10 @@ public class StudentService {
    */
   @Transactional
   public void updateCourse(CourseDetail courseDetail) {
-    final StudentCourse studentCourse = createStudentCourse(courseDetail);
+    final StudentCourse studentCourse = courseDetail.converterToStudentCourse();
     repository.updateStudentCourse(studentCourse);
 
-    final ApplicationStatus applicationStatus = createApplicationStatus(courseDetail);
+    final ApplicationStatus applicationStatus = courseDetail.converterToApplicationStatus();
     repository.updateApplicationStatus(applicationStatus);
   }
 
@@ -164,55 +164,5 @@ public class StudentService {
   public void deleteCourse(String courseId) {
     repository.deleteStudentCourse(courseId);
     repository.deleteApplicationStatus(courseId);
-  }
-
-  /**
-   * 受講生コース詳細から受講生コース情報を作成します。
-   *
-   * @param courseDetail 受講生コース詳細
-   * @return 受講生コース情報
-   */
-  private StudentCourse createStudentCourse(CourseDetail courseDetail) {
-    return new StudentCourse(
-        courseDetail.getCourseId(),
-        courseDetail.getStudentId(),
-        courseDetail.getCourse(),
-        courseDetail.getStartDate(),
-        courseDetail.getExpectedCompletionDate()
-    );
-  }
-
-  /**
-   * 受講生コース詳細から受講コース申込状況を作成します。
-   *
-   * @param courseDetail 受講生コース詳細
-   * @return 受講コース申込状況
-   */
-  private ApplicationStatus createApplicationStatus(CourseDetail courseDetail) {
-    return new ApplicationStatus(
-        courseDetail.getApplicationStatusId(),
-        courseDetail.getCourseId(),
-        courseDetail.getApplicationStatus()
-    );
-  }
-
-  /**
-   * 受講生コース情報と受講コース申込状況から受講生コース詳細を作成します。
-   *
-   * @param studentCourse     受講生コース情報
-   * @param applicationStatus 受講コース申込状況
-   * @return 受講生コース詳細
-   */
-  private CourseDetail createCourseDetail(StudentCourse studentCourse,
-      ApplicationStatus applicationStatus) {
-    return new CourseDetail(
-        studentCourse.getStudentId(),
-        studentCourse.getId(),
-        studentCourse.getCourse(),
-        studentCourse.getStartDate(),
-        studentCourse.getExpectedCompletionDate(),
-        applicationStatus.getId(),
-        applicationStatus.getApplicationStatus()
-    );
   }
 }

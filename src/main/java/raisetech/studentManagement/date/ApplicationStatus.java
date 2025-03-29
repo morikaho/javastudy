@@ -17,7 +17,7 @@ public class ApplicationStatus {
 
   private Integer id;
 
-  @Pattern(regexp = "^\\d+$",message = "数字のみ入力するようにしてください。")
+  @Pattern(regexp = "^\\d+$", message = "数字のみ入力するようにしてください。")
   private String courseId;
 
   @NotBlank

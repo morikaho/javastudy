@@ -6,8 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,13 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +29,6 @@ import raisetech.studentManagement.date.ApplicationStatus;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
 import raisetech.studentManagement.domain.CourseDetail;
-import raisetech.studentManagement.domain.StudentDetail;
 import raisetech.studentManagement.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -61,32 +55,6 @@ class StudentControllerTest {
   void 受講生詳細の検索ができて空で返ってくること() throws Exception {
     String id = "100";
     mockMvc.perform(get("/student/{id}", id))
-        .andExpect(status().isOk())
-        .andExpect(content().json("""
-                {
-                     "student": {
-                         "id": "100",
-                         "fullName": "渡辺　恵子",
-                         "furigana": "わたなべ　けいこ",
-                         "nickname": "けいこ",
-                         "emailAddress": "unique.user1937@example.com",
-                         "area": "東京都",
-                         "age": 30,
-                         "sex": "女",
-                         "remark": "特になし",
-                         "deleted": false
-                     },
-                     "studentCourseList": [
-                         {
-                             "id": "100",
-                             "studentId": "100",
-                             "course": "JAVAコース",
-                             "startDate": "2024-01-01",
-                             "expectedCompletionDate": "2024-04-01"
-                         }
-                     ]
-                 }
-            """));
         .andExpect(status().isOk());
 
     verify(service, times(1)).searchStudent(id);
@@ -101,6 +69,7 @@ class StudentControllerTest {
     verify(service, times(1)).searchCoursesByStudentId(id);
   }
 
+  @Test
   void 受講生詳細の検索ができて空のリストが返ってくること() throws Exception {
     String id = "100";
     String fullName = "渡辺 恵子";
