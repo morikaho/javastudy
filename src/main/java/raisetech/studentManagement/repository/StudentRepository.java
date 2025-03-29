@@ -1,12 +1,7 @@
 package raisetech.studentManagement.repository;
 
 import java.util.List;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 import raisetech.studentManagement.date.ApplicationStatus;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
@@ -46,26 +41,35 @@ public interface StudentRepository {
    * @param studentId 受講生ID
    * @return 受講生IDに紐づく受講生コース情報
    */
-  List<StudentCourse> searchStudentCourse(String studentId);
+  List<StudentCourse> searchStudentCourseByStudentId(String studentId);
 
-  //受講生IDに紐づくコース詳細検索
+  /**
+   * 受講生IDに紐づく受講生コース詳細を検索します。
+   *
+   * @param studentId 　受講生ID
+   * @return 受講生IDに紐づく受講生コース詳細
+   */
   List<CourseDetail> searchCourseDetailsByStudentId(String studentId);
 
   /**
-   * 受講生を新規登録します。　IDに関しては自動採番を行う。
+   * 受講生を新規登録します。　IDに関しては自動採番を行います。
    *
    * @param student 受講生
    */
   void insertStudent(Student student);
 
   /**
-   * 受講生コース情報を新規登録します。　IDに関しては自動採番を行う。
+   * 受講生コース情報を新規登録します。IDに関しては自動採番を行います。
    *
    * @param studentCourse 受講生コース情報
    */
   void insertStudentCourse(StudentCourse studentCourse);
 
-  //申込状況の登録 id自動
+  /**
+   * 受講コース申込状況を新規登録します。IDに関しては自動採番を行います。
+   *
+   * @param applicationStatus 受講コース申込状況
+   */
   void insertApplicationStatus(ApplicationStatus applicationStatus);
 
   /**
@@ -75,18 +79,31 @@ public interface StudentRepository {
    */
   void updateStudent(Student student);
 
-  //コースの更新
+  /**
+   * 受講生コース情報を更新します。
+   *
+   * @param studentCourse 　受講生コース情報
+   */
   void updateStudentCourse(StudentCourse studentCourse);
 
-  //申込状況の更新
+  /**
+   * 受講コース申込状況を更新します。
+   *
+   * @param applicationStatus 受講コース申込状況
+   */
   void updateApplicationStatus(ApplicationStatus applicationStatus);
 
-  //コースの削除
+  /**
+   * 受講生コースIDに紐づく受講生コース情報を削除します。
+   *
+   * @param courseId 受講生コースID
+   */
   void deleteStudentCourse(String courseId);
 
-  //申し込み状況の削除
+  /**
+   * 受講生コースIDに紐づく受講コース申込状況を削除します。
+   *
+   * @param courseId 受講生コースID
+   */
   void deleteApplicationStatus(String courseId);
-
 }
-
-

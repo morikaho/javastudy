@@ -12,17 +12,18 @@
     SELECT * FROM students WHERE id = #{id}
   </select>
 
-  <!-- 受講生コース情報の全件検索　-->
+  <!-- コース情報の全件検索　-->
   <select id="searchStudentCourseList" resultType="raisetech.studentManagement.date.StudentCourse">
     SELECT * FROM students_courses
   </select>
 
-  <!-- 受講生コース情報の検索　-->
-  <select id="searchStudentCourse" resultType="raisetech.studentManagement.date.StudentCourse">
+  <!-- コース情報の検索　-->
+  <select id="searchStudentCourseByStudentId"
+    resultType="raisetech.studentManagement.date.StudentCourse">
     SELECT * FROM students_courses WHERE student_id = #{studentId}
   </select>
 
-  <!-- 受講生IDで受講コース詳細の検索　-->
+  <!-- 受講生IDでコース詳細の検索　-->
   <select id="searchCourseDetailsByStudentId" parameterType="String"
     resultType="raisetech.studentManagement.domain.CourseDetail">
     SELECT
@@ -47,7 +48,7 @@
     #{remark}, false)
   </insert>
 
-  <!-- 受講生コース情報の登録 -->
+  <!-- コース情報の登録 -->
   <insert id="insertStudentCourse" parameterType="raisetech.studentManagement.date.StudentCourse"
     useGeneratedKeys="true" keyProperty="id">
     INSERT INTO students_courses (student_id, course, start_date, expected_completion_date)
@@ -71,7 +72,7 @@
     WHERE id = #{id}
   </update>
 
-  <!-- 受講生コース情報の更新 -->
+  <!-- コース情報の更新 -->
   <update id="updateStudentCourse" parameterType="raisetech.studentManagement.date.StudentCourse">
     UPDATE students_courses SET course = #{course}, start_date = #{startDate},
     expected_completion_date = #{expectedCompletionDate} WHERE id = #{id}
@@ -80,11 +81,11 @@
   <!-- 申込状況の更新 -->
   <update id="updateApplicationStatus"
     parameterType="raisetech.studentManagement.date.ApplicationStatus">
-    UPDATE application_status SET application_status = #{applicationStatus} WHERE course_id =
-    #{courseId}
+    UPDATE application_status SET application_status = #{applicationStatus}
+    WHERE course_id = #{courseId}
   </update>
 
-  <!-- 受講生コース情報の削除 -->
+  <!-- コース情報の削除 -->
   <delete id="deleteStudentCourse" parameterType="String">
     DELETE FROM students_courses WHERE id = #{id}
   </delete>

@@ -29,8 +29,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import raisetech.studentManagement.date.ApplicationStatus;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
+import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.domain.StudentDetail;
 import raisetech.studentManagement.service.StudentService;
 
@@ -68,29 +70,29 @@ class StudentControllerTest {
     mockMvc.perform(get("/student/{id}", id))
         .andExpect(status().isOk())
         .andExpect(content().json("""
-            {
-                "student": {
-                    "id": "100",
-                    "fullName": "渡辺　恵子",
-                    "furigana": "わたなべ　けいこ",
-                    "nickname": "けいこ",
-                    "emailAddress": "unique.user1937@example.com",
-                    "area": "東京都",
-                    "age": 30,
-                    "sex": "女",
-                    "remark": "特になし",
-                    "deleted": false
-                },
-                "studentCourseList": [
-                    {
-                        "id": "100",
-                        "studentId": "100",
-                        "course": "JAVAコース",
-                        "startDate": "2024-01-01",
-                        "expectedCompletionDate": "2024-04-01"
-                    }
-                ]
-            }
+                {
+                     "student": {
+                         "id": "100",
+                         "fullName": "渡辺　恵子",
+                         "furigana": "わたなべ　けいこ",
+                         "nickname": "けいこ",
+                         "emailAddress": "unique.user1937@example.com",
+                         "area": "東京都",
+                         "age": 30,
+                         "sex": "女",
+                         "remark": "特になし",
+                         "deleted": false
+                     },
+                     "studentCourseList": [
+                         {
+                             "id": "100",
+                             "studentId": "100",
+                             "course": "JAVAコース",
+                             "startDate": "2024-01-01",
+                             "expectedCompletionDate": "2024-04-01"
+                         }
+                     ]
+                 }
             """));
 
     verify(service, times(1)).searchStudent(id);
@@ -208,7 +210,6 @@ class StudentControllerTest {
     verify(service, times(1)).deleteCourse(courseId);
   }
 
-
   @Test
   void studentsで検索をした際適切なエラーメッセージが返ってくること() throws Exception {
     mockMvc.perform(get("/students"))
@@ -281,6 +282,52 @@ class StudentControllerTest {
         .containsOnly(
             tuple("id", "数字のみ入力するようにしてください。"),
             tuple("studentId", "数字のみ入力するようにしてください。")
+        );
+  }
+
+  @Test
+  void 受講コース申込状況で適切な値を入力した時に入力チェックに異常が発生しないこと() {
+    ApplicationStatus applicationStatus = new ApplicationStatus(1, "1", "仮申込");
+
+    Set<ConstraintViolation<ApplicationStatus>> violations = validator.validate(applicationStatus);
+
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  void 受講コース申込状況でコースIDに数字以外を用いた時に入力チェックがかかること() {
+    ApplicationStatus applicationStatus = new ApplicationStatus(1, "テストです", "仮申込");
+
+    Set<ConstraintViolation<ApplicationStatus>> violations = validator.validate(applicationStatus);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("数字のみ入力するようにしてください。");
+  }
+
+  @Test
+  void 受講生コース詳細で適切な値を入力した時に入力チェックに異常が発生しないこと() {
+    CourseDetail courseDetail1 = new CourseDetail("1", "1", "JAVAコース",
+        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"), 1, "仮申込");
+
+    Set<ConstraintViolation<CourseDetail>> violations = validator.validate(courseDetail1);
+
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  void 受講生コース詳細で受講生IDとコースIDに数字以外を用いた時に入力チェックにかかること() {
+    CourseDetail courseDetail1 = new CourseDetail("テストです。", "テストです。", "JAVAコース",
+        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"), 1, "仮申込");
+
+    Set<ConstraintViolation<CourseDetail>> violations = validator.validate(courseDetail1);
+
+    assertThat(violations.size()).isEqualTo(2);
+    assertThat(violations).extracting(v -> v.getPropertyPath().toString(),
+            ConstraintViolation::getMessage)
+        .containsOnly(
+            tuple("studentId", "数字のみ入力するようにしてください。"),
+            tuple("courseId", "数字のみ入力するようにしてください。")
         );
   }
 }

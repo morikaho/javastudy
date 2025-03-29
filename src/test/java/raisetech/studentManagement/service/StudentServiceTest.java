@@ -1,15 +1,13 @@
 package raisetech.studentManagement.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.crypto.Data;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,15 +59,15 @@ class StudentServiceTest {
     String id = "100";
     student.setId(id);
     when(repository.searchStudent(id)).thenReturn(student);
-    when(repository.searchStudentCourse(id)).thenReturn(studentCourse);
+    when(repository.searchStudentCourseByStudentId(id)).thenReturn(studentCourse);
 
     StudentDetail expected = new StudentDetail(student, studentCourse);
 
     StudentDetail actual = sut.searchStudent(id);
 
     verify(repository, times(1)).searchStudent(id);
-    verify(repository, times(1)).searchStudentCourse(id);
-    assertEquals(expected, actual);
+    verify(repository, times(1)).searchStudentCourseByStudentId(id);
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
@@ -100,7 +98,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講コース詳細の登録_リポジトリの処理が適切に呼び出せていること() {
+  void 受講生コース詳細の登録_リポジトリの処理が適切に呼び出せていること() {
     StudentCourse studentCourse = new StudentCourse();
     ApplicationStatus applicationStatus = new ApplicationStatus();
     CourseDetail courseDetail = new CourseDetail();
@@ -121,26 +119,27 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講コース詳細の更新＿リポジトリの処理が適切に呼び出せていること() {
+  void 受講生コース詳細の更新＿リポジトリの処理が適切に呼び出せていること() {
     StudentCourse studentCourse = new StudentCourse();
     ApplicationStatus applicationStatus = new ApplicationStatus();
     CourseDetail courseDetail = new CourseDetail(studentCourse.getStudentId(),
-        studentCourse.getId(), studentCourse.getCourse(), studentCourse.getStartDate(), studentCourse.getExpectedCompletionDate(),
+        studentCourse.getId(), studentCourse.getCourse(), studentCourse.getStartDate(),
+        studentCourse.getExpectedCompletionDate(),
         applicationStatus.getId(), applicationStatus.getApplicationStatus());
 
     sut.updateCourse(courseDetail);
 
-    verify(repository,times(1)).updateStudentCourse(studentCourse);
-    verify(repository,times(1)).updateApplicationStatus(applicationStatus);
+    verify(repository, times(1)).updateStudentCourse(studentCourse);
+    verify(repository, times(1)).updateApplicationStatus(applicationStatus);
   }
 
   @Test
-  void 受講コース詳細の削除_リポジトリの処理が適切に呼び出せていること(){
+  void 受講生コース詳細の削除_リポジトリの処理が適切に呼び出せていること() {
     String courseId = "1";
 
     sut.deleteCourse(courseId);
 
-    verify(repository,times(1)).deleteStudentCourse(courseId);
-    verify(repository,times(1)).deleteApplicationStatus(courseId);
+    verify(repository, times(1)).deleteStudentCourse(courseId);
+    verify(repository, times(1)).deleteApplicationStatus(courseId);
   }
 }

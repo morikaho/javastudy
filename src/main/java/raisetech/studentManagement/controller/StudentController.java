@@ -2,6 +2,7 @@ package raisetech.studentManagement.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -53,6 +54,14 @@ public class StudentController {
   /**
    * 例外を発生させます。
    */
+  @Operation(
+      summary = "学生一覧の取得 (非推奨)",
+      description = "このAPIは現在利用できません。代わりに `/studentList` を使用してください。"
+  )
+  @ApiResponse(
+      responseCode = "400",
+      description = "API利用不可エラー"
+  )
   @GetMapping("/students")
   public List<StudentDetail> getStudents() throws TestException {
     throw new TestException(
@@ -77,17 +86,28 @@ public class StudentController {
     return service.searchStudent(id);
   }
 
-  //受講生IDによる受講コース詳細情報の検索
+  /**
+   * 受講生コース詳細の検索です。受講生IDに紐づく任意の受講生コース詳細を取得します。
+   *
+   * @param id 受講生ID
+   * @return 受講生コース詳細
+   */
+  @Operation(summary = "コース検索", description = "受講生コース詳細を検索します。")
   @GetMapping("/course/{id}")
-  public List<CourseDetail> getCourses(@PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String id){
+  public List<CourseDetail> getCoursesByStudentId(
+      @Parameter(
+          description = "受講生ID",
+          example = "1234"
+      )
+      @PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String id) {
     return service.searchCoursesByStudentId(id);
   }
 
-  //受講生情報とコース詳細登録
   /**
+   * 受講生詳細の登録を行います。
    *
-   * @param studentRegistrationResult
-   * @return
+   * @param studentRegistrationResult 受講生詳細
+   * @return 実行結果
    */
   @Operation(summary = "受講生登録", description = "受講生を登録します。")
   @PostMapping("/registerStudent")
@@ -98,14 +118,26 @@ public class StudentController {
     return ResponseEntity.ok(responseStudentRegistrationResult);
   }
 
-  //コース詳細登録
+  /**
+   * 受講生コース詳細の登録を行います。
+   *
+   * @param courseDetail 受講生コース詳細
+   * @return 実行結果
+   */
+  @Operation(summary = "コース登録", description = "受講生コース詳細を登録します。")
   @PostMapping("/registerCourse")
-  public  ResponseEntity<CourseDetail> registerCourse(@RequestBody CourseDetail courseDetail){
+  public ResponseEntity<CourseDetail> registerCourse(
+      @RequestBody @Valid CourseDetail courseDetail) {
     final CourseDetail ResponsecourseDetail = service.registerCourse(courseDetail);
-    return  ResponseEntity.ok(ResponsecourseDetail);
+    return ResponseEntity.ok(ResponsecourseDetail);
   }
 
-  //受講生の更新
+  /**
+   * 受講生の更新を行います。キャンセルフラグの更新もここで行います。（論理削除）
+   *
+   * @param student 　受講生
+   * @return 実行結果
+   */
   @Operation(summary = "受講生更新", description = "受講生を更新します。")
   @PutMapping("/updateStudent")
   public ResponseEntity<String> updateStudent(
@@ -114,18 +146,30 @@ public class StudentController {
     return ResponseEntity.ok("更新処理が成功しました。");
   }
 
-    //受講コース詳細の更新
-    @PutMapping("/updateCourse")
-    public ResponseEntity<String> updateCourse(
-        @RequestBody  CourseDetail courseDetail) {
-      service.updateCourse(courseDetail);
-      return ResponseEntity.ok("更新処理が成功しました。");
+  /**
+   * 受講生コース詳細の更新を行います。
+   *
+   * @param courseDetail 受講生コース詳細
+   * @return 実行結果
+   */
+  @Operation(summary = "コース更新", description = "受講生コース詳細を更新します。")
+  @PutMapping("/updateCourse")
+  public ResponseEntity<String> updateCourse(
+      @RequestBody @Valid CourseDetail courseDetail) {
+    service.updateCourse(courseDetail);
+    return ResponseEntity.ok("更新処理が成功しました。");
   }
 
-  //受講コース詳細の削除
+  /**
+   * 受講生コースIDに紐づく受講生コース詳細の削除を行います。
+   *
+   * @param courseId 受講生コースID
+   * @return 実行結果
+   */
+  @Operation(summary = "コース削除", description = "受講生コース詳細を削除します。")
   @DeleteMapping("/deleteCourse/{courseId}")
   public ResponseEntity<String> deleteCourse(
-      @PathVariable  String courseId) {
+      @PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String courseId) {
     service.deleteCourse(courseId);
     return ResponseEntity.ok("削除処理が成功しました。");
   }

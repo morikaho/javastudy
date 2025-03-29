@@ -4,11 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.studentManagement.date.ApplicationStatus;
@@ -53,7 +49,7 @@ class StudentRepositoryTest {
         LocalDate.parse("2025-06-01"), LocalDate.parse("2025-09-01"));
     List<StudentCourse> expected = List.of(studentCourse1, studentCourse2);
 
-    final List<StudentCourse> actual = sut.searchStudentCourse(studentId);
+    final List<StudentCourse> actual = sut.searchStudentCourseByStudentId(studentId);
 
     assertThat(actual).isEqualTo(expected);
   }
@@ -73,16 +69,8 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生の登録が行えること() {
-    Student student = new Student();
-    student.setFullName("渡辺　恵子");
-    student.setFurigana("わたなべ　けいこ");
-    student.setNickname("けいこ");
-    student.setEmailAddress("unique.user1937@example.com");
-    student.setArea("東京都");
-    student.setAge(30);
-    student.setSex("女");
-    student.setRemark("");
-    student.setDeleted(false);
+    Student student = new Student(null, "渡辺　恵子", "わたなべ　けいこ", "けいこ",
+        "unique.user1937@example.com", "東京都", 30, "女", "", false);
 
     sut.insertStudent(student);
 
@@ -93,11 +81,8 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生コース情報の登録が行えること() {
-    StudentCourse studentCourse = new StudentCourse();
-    studentCourse.setStudentId("1");
-    studentCourse.setCourse("デザインコース");
-    studentCourse.setStartDate(LocalDate.parse("2024-07-01"));
-    studentCourse.setExpectedCompletionDate(LocalDate.parse("2024-10-01"));
+    StudentCourse studentCourse = new StudentCourse(null, "1", "デザインコース",
+        LocalDate.parse("2024-07-01"), LocalDate.parse("2024-10-01"));
 
     sut.insertStudentCourse(studentCourse);
 
@@ -143,7 +128,7 @@ class StudentRepositoryTest {
 
     sut.updateStudentCourse(expected);
 
-    final List<StudentCourse> actual = sut.searchStudentCourse(studentId);
+    final List<StudentCourse> actual = sut.searchStudentCourseByStudentId(studentId);
 
     assertThat(actual.getFirst()).isEqualTo(expected);
   }
@@ -155,8 +140,7 @@ class StudentRepositoryTest {
 
     sut.updateApplicationStatus(expected);
 
-    final List<CourseDetail> courseDetail = sut.searchCourseDetailsByStudentId("1");
-    final CourseDetail first = courseDetail.getFirst();
+    final CourseDetail first = sut.searchCourseDetailsByStudentId("1").getFirst();
     ApplicationStatus actual = new ApplicationStatus(first.getApplicationStatusId(),
         first.getCourseId(), first.getApplicationStatus());
 
@@ -177,7 +161,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講コース詳細の削除が行えること(){
+  void 受講コース詳細の削除が行えること() {
     String courseId = "1";
     String studentId = "1";
 

@@ -1,8 +1,6 @@
 package raisetech.studentManagement.service;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,16 +48,26 @@ public class StudentService {
    */
   public StudentDetail searchStudent(String id) {
     Student student = repository.searchStudent(id);
-    List<StudentCourse> studentCourse = repository.searchStudentCourse(student.getId());
+    List<StudentCourse> studentCourse = repository.searchStudentCourseByStudentId(student.getId());
     return new StudentDetail(student, studentCourse);
   }
 
-  //受講生IDに紐づくコース詳細の検索
+  /**
+   * 受講生IDに紐づく受講生コース詳細の検索です。
+   *
+   * @param id 受講生ID
+   * @return 受講生コース詳細一覧
+   */
   public List<CourseDetail> searchCoursesByStudentId(String id) {
     return repository.searchCourseDetailsByStudentId(id);
   }
 
-  //受講生とコース詳細登録
+  /**
+   * 受講生詳細の登録を行います。受講生と受講生コース情報と受講コース申し込み状況個別に登録します。
+   *
+   * @param studentRegistrationResult 　受講生詳細
+   * @return 受講生詳細
+   */
   @Transactional
   public StudentRegistrationResult registerStudent(
       StudentRegistrationResult studentRegistrationResult) {
@@ -68,59 +76,114 @@ public class StudentService {
 
     repository.insertStudent(student);
 
-    CourseDetail courseDetail1 = new CourseDetail(student.getId(), null, courseDetail.getCourse(),
-        courseDetail.getStartDate(), courseDetail.getExpectedCompletionDate(), null,
-        courseDetail.getApplicationStatus());
-
-    final CourseDetail responseCourseDetail = registerCourse(courseDetail1);
+    courseDetail.setStudentId(student.getId());
+    final CourseDetail responseCourseDetail = registerCourse(courseDetail);
 
     studentRegistrationResult.setCourseDetail(responseCourseDetail);
     return studentRegistrationResult;
   }
 
-  //コース詳細登録
+  /**
+   * 受講生コース詳細の登録を行います。受講生コース情報と受講コース申込状況を個別に登録します。
+   *
+   * @param courseDetail 　受講生コース詳細
+   * @return 受講生コース詳細
+   */
   @Transactional
   public CourseDetail registerCourse(CourseDetail courseDetail) {
-    StudentCourse studentCourse = new StudentCourse(null, courseDetail.getStudentId(),
-        courseDetail.getCourse(), courseDetail.getStartDate(),
-        courseDetail.getExpectedCompletionDate());
+    final StudentCourse studentCourse = createStudentCourse(courseDetail);
     repository.insertStudentCourse(studentCourse);
 
-    ApplicationStatus applicationStatus = new ApplicationStatus(null, studentCourse.getId(),
-        courseDetail.getApplicationStatus());
+    final ApplicationStatus applicationStatus = createApplicationStatus(courseDetail);
     repository.insertApplicationStatus(applicationStatus);
 
-    CourseDetail responseCourseDetail = new CourseDetail(studentCourse.getStudentId(),
-        studentCourse.getId(), studentCourse.getCourse(), studentCourse.getStartDate(),
-        studentCourse.getExpectedCompletionDate(), applicationStatus.getId(),
-        applicationStatus.getApplicationStatus());
+    final CourseDetail responseCourseDetail = createCourseDetail(studentCourse, applicationStatus);
     return responseCourseDetail;
   }
 
-  //受講生の更新
+
+  /**
+   * 受講生の更新を行います。
+   *
+   * @param student 　受講生
+   */
   @Transactional
   public void updateStudent(Student student) {
     repository.updateStudent(student);
   }
 
-  //受講コース詳細の更新
+  /**
+   * 受講生コース詳細の更新を行います。受講生コース情報と受講コース申し込み状況をそれぞれ更新します。
+   *
+   * @param courseDetail 　受講生コース詳細
+   */
   @Transactional
   public void updateCourse(CourseDetail courseDetail) {
-    StudentCourse studentCourse = new StudentCourse(courseDetail.getCourseId(),
-        courseDetail.getStudentId(), courseDetail.getCourse(), courseDetail.getStartDate(),
-        courseDetail.getExpectedCompletionDate());
+    final StudentCourse studentCourse = createStudentCourse(courseDetail);
     repository.updateStudentCourse(studentCourse);
 
-    ApplicationStatus applicationStatus = new ApplicationStatus(
-        courseDetail.getApplicationStatusId(), courseDetail.getCourseId(),
-        courseDetail.getApplicationStatus());
+    final ApplicationStatus applicationStatus = createApplicationStatus(courseDetail);
     repository.updateApplicationStatus(applicationStatus);
   }
 
-  //受講コース詳細の削除
+  /**
+   * 受講生コース詳細の削除を行います。受講コースIDに紐づく受講生コース情報と受講コース申し込み状況を削除します。
+   *
+   * @param courseId 　受講生コースID
+   */
   @Transactional
-  public void deleteCourse(String courseId){
+  public void deleteCourse(String courseId) {
     repository.deleteStudentCourse(courseId);
     repository.deleteApplicationStatus(courseId);
+  }
+
+  /**
+   * 受講生コース詳細から受講生コース情報を作成します。
+   *
+   * @param courseDetail 受講生コース詳細
+   * @return 受講生コース情報
+   */
+  private StudentCourse createStudentCourse(CourseDetail courseDetail) {
+    return new StudentCourse(
+        courseDetail.getCourseId(),
+        courseDetail.getStudentId(),
+        courseDetail.getCourse(),
+        courseDetail.getStartDate(),
+        courseDetail.getExpectedCompletionDate()
+    );
+  }
+
+  /**
+   * 受講生コース詳細から受講コース申込状況を作成します。
+   *
+   * @param courseDetail 受講生コース詳細
+   * @return 受講コース申込状況
+   */
+  private ApplicationStatus createApplicationStatus(CourseDetail courseDetail) {
+    return new ApplicationStatus(
+        courseDetail.getApplicationStatusId(),
+        courseDetail.getCourseId(),
+        courseDetail.getApplicationStatus()
+    );
+  }
+
+  /**
+   * 受講生コース情報と受講コース申込状況から受講生コース詳細を作成します。
+   *
+   * @param studentCourse     受講生コース情報
+   * @param applicationStatus 受講コース申込状況
+   * @return 受講生コース詳細
+   */
+  private CourseDetail createCourseDetail(StudentCourse studentCourse,
+      ApplicationStatus applicationStatus) {
+    return new CourseDetail(
+        studentCourse.getStudentId(),
+        studentCourse.getId(),
+        studentCourse.getCourse(),
+        studentCourse.getStartDate(),
+        studentCourse.getExpectedCompletionDate(),
+        applicationStatus.getId(),
+        applicationStatus.getApplicationStatus()
+    );
   }
 }

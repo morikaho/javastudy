@@ -1,6 +1,7 @@
 package raisetech.studentManagement.date;
 
-import io.swagger.v3.oas.models.security.SecurityScheme.In;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +17,9 @@ public class ApplicationStatus {
 
   private Integer id;
 
+  @Pattern(regexp = "^\\d+$",message = "数字のみ入力するようにしてください。")
   private String courseId;
 
+  @NotBlank
   private String applicationStatus;
 }
