@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,7 +19,7 @@ import lombok.Setter;
 public class Student {
 
   @Schema(description = "受講生ID", example = "1234")
-  @Pattern(regexp = "^\\d+$",message = "数字のみ入力するようにしてください。")
+  @Pattern(regexp = "^\\d+$", message = "数字のみ入力するようにしてください。")
   private String id;
 
   @Schema(description = "受講生の名前", example = "山田　太郎")

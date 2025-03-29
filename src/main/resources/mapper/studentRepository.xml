@@ -46,31 +46,64 @@
     SELECT * FROM students_courses
   </select>
 
+  <!-- コース情報の検索　-->
+  <select id="searchStudentCourseByStudentId"
+    resultType="raisetech.studentManagement.date.StudentCourse">
+    SELECT * FROM students_courses WHERE student_id = #{studentId}
+  </select>
+
   <!-- 一件の受講生IDで受講生コース情報の検索　-->
   <select id="searchStudentCourse" resultType="raisetech.studentManagement.date.StudentCourse">
     SELECT * FROM students_courses WHERE student_id =#{studentId}
   </select>
 
   <!-- 複数の受講生IDで受講生コース情報の検索　-->
-  <select id="searchStudentCoursesByStudentIds" parameterType="list" resultType="raisetech.studentManagement.date.StudentCourse">
+  <select id="searchStudentCoursesByStudentIds" parameterType="list"
+    resultType="raisetech.studentManagement.date.StudentCourse">
     SELECT * FROM students_courses WHERE student_id IN
     <foreach item="studentId" collection="list" open="(" separator="," close=")">
       #{studentId}
     </foreach>
   </select>
 
+  <!-- 受講生IDでコース詳細の検索　-->
+  <select id="searchCourseDetailsByStudentId" parameterType="String"
+    resultType="raisetech.studentManagement.domain.CourseDetail">
+    SELECT
+    sc.id AS courseId,
+    sc.student_id,
+    sc.course,
+    sc.start_date,
+    sc.expected_completion_date,
+    as_table.id AS applicationStatusId,
+    as_table.application_status
+    FROM students_courses sc
+    JOIN application_status as_table ON sc.id = as_table.course_id
+    WHERE sc.student_id = #{studentId};
+  </select>
+
   <!-- 受講生の登録 -->
-  <insert id="insertStudent" parameterType="raisetech.studentManagement.date.Student" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertStudent" parameterType="raisetech.studentManagement.date.Student"
+    useGeneratedKeys="true" keyProperty="id">
     INSERT INTO students (full_name, furigana, nick_name, email_address, area, age, sex, remark,
     is_deleted)
     VALUES (#{fullName}, #{furigana}, #{nickname}, #{emailAddress}, #{area}, #{age}, #{sex},
     #{remark}, false)
   </insert>
 
-  <!-- 受講生コース情報の登録 -->
-  <insert id="insertStudentCourse" parameterType="raisetech.studentManagement.date.StudentCourse" useGeneratedKeys="true" keyProperty="id">
+  <!-- コース情報の登録 -->
+  <insert id="insertStudentCourse" parameterType="raisetech.studentManagement.date.StudentCourse"
+    useGeneratedKeys="true" keyProperty="id">
     INSERT INTO students_courses (student_id, course, start_date, expected_completion_date)
     VALUES (#{studentId}, #{course}, #{startDate}, #{expectedCompletionDate})
+  </insert>
+
+  <!-- 申込状況の登録 -->
+  <insert id="insertApplicationStatus"
+    parameterType="raisetech.studentManagement.date.ApplicationStatus" useGeneratedKeys="true"
+    keyProperty="id">
+    INSERT INTO application_status (course_id, application_status)
+    VALUES (#{courseId}, #{applicationStatus})
   </insert>
 
   <!-- 受講生の更新 -->
@@ -82,8 +115,26 @@
     WHERE id = #{id}
   </update>
 
-  <!-- 受講生コース情報の更新 -->
+  <!-- コース情報の更新 -->
   <update id="updateStudentCourse" parameterType="raisetech.studentManagement.date.StudentCourse">
-    UPDATE students_courses SET course = #{course} WHERE id = #{id}
+    UPDATE students_courses SET course = #{course}, start_date = #{startDate},
+    expected_completion_date = #{expectedCompletionDate} WHERE id = #{id}
   </update>
+
+  <!-- 申込状況の更新 -->
+  <update id="updateApplicationStatus"
+    parameterType="raisetech.studentManagement.date.ApplicationStatus">
+    UPDATE application_status SET application_status = #{applicationStatus}
+    WHERE course_id = #{courseId}
+  </update>
+
+  <!-- コース情報の削除 -->
+  <delete id="deleteStudentCourse" parameterType="String">
+    DELETE FROM students_courses WHERE id = #{id}
+  </delete>
+
+  <!-- 申込状況の削除 -->
+  <delete id="deleteApplicationStatus" parameterType="String">
+    DELETE FROM application_status WHERE course_id = #{courseId}
+  </delete>
 </mapper>
