@@ -1,6 +1,7 @@
 package raisetech.studentManagement.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,35 @@ public class StudentService {
   }
 
   /**
-   * 受講生IDに紐づく受講生コース詳細の検索です。
+   * 受講生詳細検索です。指定した条件に紐づく任意の受講生を取得したあと、その受講生に紐づく受講生コース情報を取得して設定します。
+   *
+   * @param id           　受講生ID
+   * @param fullName     　受講生名
+   * @param furigana     　ふりがな
+   * @param nickname     　ニックネーム
+   * @param emailAddress 　メールアドレス
+   * @param area         　住所
+   * @param age          　年齢
+   * @param sex          　性別
+   * @return 条件に紐づく受講生詳細一覧
+   */
+  public List<StudentDetail> searchStudentsByCondition(String id, String fullName, String furigana,
+      String nickname,
+      String emailAddress, String area, Integer age, String sex) {
+    final List<Student> studentList = repository.searchStudentsByCondition(id, fullName, furigana, nickname,
+        emailAddress, area, age, sex);
+
+    List<String> idList = studentList.stream()
+        .map(Student::getId)
+        .toList();
+
+    final List<StudentCourse> studentCourseList = repository.searchStudentCoursesByStudentIds(idList);
+
+    return converter.convertStudentDetails(studentList, studentCourseList);
+  }
+
+  /**
+   * 受講生詳細の登録を行います。 受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値とコース開始日、コース終了日を設定します。
    *
    * @param id 受講生ID
    * @return 受講生コース詳細一覧

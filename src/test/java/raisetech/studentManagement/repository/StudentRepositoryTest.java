@@ -25,11 +25,22 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生の検索が行えること() {
-    Student expected = new Student("1", "渡辺　恵子", "わたなべ　けいこ", "けいちゃん",
-        "unique.user1937@example.com", "東京都新宿区新宿", 30, "女", null, false);
+  void 受講生IDで受講生の検索が行えること() {
+    Student expected = createStudent();
 
     final Student actual = sut.searchStudent("1");
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void 指定した条件で受講生の検索が行えること() {
+    final Student student = createStudent();
+
+    List <Student> expected = List.of(student);
+
+    final List<Student> actual = sut.searchStudentsByCondition("1", "渡辺　恵子", "わたなべ", "けい",
+        "unique.user1937@example.com", "東京",30 , "女");
 
     assertThat(actual).isEqualTo(expected);
   }
@@ -63,6 +74,26 @@ class StudentRepositoryTest {
     List<CourseDetail> expected = List.of(courseDetail1);
 
     final List<CourseDetail> actual = sut.searchCourseDetailsByStudentId(studentId);
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void 複数の受講生IDに紐づく受講生コース情報検索が行えること() {
+    String studentId1 = "1";
+    String studentId2 = "3";
+
+    StudentCourse studentCourse1 = new StudentCourse("1", studentId1, "JAVAコース",
+        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"));
+    StudentCourse studentCourse2 = new StudentCourse("6", studentId1, "AWSコース",
+        LocalDate.parse("2024-06-01"), LocalDate.parse("2024-09-01"));
+    StudentCourse studentCourse3 = new StudentCourse("3", studentId2, "デザインコース",
+        LocalDate.parse("2024-03-01"), LocalDate.parse("2024-06-01"));
+    List<StudentCourse> expected = List.of(studentCourse1, studentCourse2,studentCourse3);
+
+    List<String> studentIds = List.of(studentId1,studentId2);
+
+    final List<StudentCourse> actual = sut.searchStudentCoursesByStudentIds(studentIds);
 
     assertThat(actual).isEqualTo(expected);
   }
@@ -133,7 +164,6 @@ class StudentRepositoryTest {
     assertThat(actual.getFirst()).isEqualTo(expected);
   }
 
-
   @Test
   void 受講コース申し込み状況の更新が行えること() {
     ApplicationStatus expected = new ApplicationStatus(1, "1", "受講中");
@@ -170,5 +200,10 @@ class StudentRepositoryTest {
     final List<CourseDetail> actual = sut.searchCourseDetailsByStudentId(studentId);
 
     assertThat(actual).isEmpty();
+
+  private Student createStudent() {
+    Student student = new Student("1", "渡辺　恵子", "わたなべ　けいこ", "けいちゃん",
+        "unique.user1937@example.com", "東京都新宿区新宿", 30, "女", null, false);
+    return student;
   }
 }

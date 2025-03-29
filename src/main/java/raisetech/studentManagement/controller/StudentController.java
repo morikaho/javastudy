@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import raisetech.studentManagement.date.Student;
@@ -74,9 +76,9 @@ public class StudentController {
    * @param id 　受講生ID
    * @return 受講生
    */
-  @Operation(summary = "詳細検索", description = "受講生詳細の検索です。 IDに紐づく任意の受講生情報を取得します。")
+  @Operation(summary = "IDによる詳細検索", description = "受講生詳細の検索です。 IDに紐づく任意の受講生情報を取得します。")
   @GetMapping("/student/{id}")
-  public StudentDetail getStudent(
+  public StudentDetail getStudentById(
       @Parameter(
           description = "受講生ID",
           required = true,
@@ -87,20 +89,73 @@ public class StudentController {
   }
 
   /**
-   * 受講生コース詳細の検索です。受講生IDに紐づく任意の受講生コース詳細を取得します。
+   * 受講生詳細の検索です。 指定した条件に紐づく任意の受講生情報を取得します。
    *
-   * @param id 受講生ID
-   * @return 受講生コース詳細
+   * @param id           　受講生ID
+   * @param fullName     　受講生名
+   * @param furigana     　ふりがな
+   * @param nickname     　ニックネーム
+   * @param emailAddress 　メールアドレス
+   * @param area         　住所
+   * @param age          　年齢
+   * @param sex          　性別
+   * @return 条件に紐づく受講生詳細一覧
    */
-  @Operation(summary = "コース検索", description = "受講生コース詳細を検索します。")
-  @GetMapping("/course/{id}")
-  public List<CourseDetail> getCoursesByStudentId(
+  @Operation(summary = "指定した条件の詳細検索", description = "受講生詳細の検索です。指定した条件に紐づく任意の受講生情報を取得します。")
+  @GetMapping("/students/filter")
+  public List<StudentDetail> getStudentsByCondition(
+
       @Parameter(
           description = "受講生ID",
           example = "1234"
       )
-      @PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String id) {
-    return service.searchCoursesByStudentId(id);
+
+      @RequestParam(required = false) @Pattern(regexp = "^\\d+$") String id,
+
+      @Parameter(
+          description = "受講生名",
+          example = "渡辺 恵子"
+      )
+      @RequestParam(required = false) String fullName,
+
+      @Parameter(
+          description = "ふりがな",
+          example = "わたなべ けいこ"
+      )
+      @RequestParam(required = false) String furigana,
+
+      @Parameter(
+          description = "ニックネーム",
+          example = "けいちゃん"
+      )
+      @RequestParam(required = false) String nickname,
+
+      @Parameter(
+          description = "メールアドレス",
+          example = "example@example.com"
+      )
+      @RequestParam(required = false) String emailAddress,
+
+      @Parameter(
+          description = "住所",
+          example = "東京都新宿区"
+      )
+      @RequestParam(required = false) String area,
+
+      @Parameter(
+          description = "年齢",
+          example = "30"
+      )
+      @RequestParam(required = false) Integer age,
+
+      @Parameter(
+          description = "性別",
+          example = "女"
+      )
+      @RequestParam(required = false) String sex
+  ) {
+    return service.searchStudentsByCondition(id, fullName, furigana, nickname, emailAddress, area,
+        age, sex);
   }
 
   /**
