@@ -69,8 +69,7 @@ public class StudentService {
       String nickname,
       String emailAddress, String area, Integer age, String sex) {
     final List<Student> studentList = repository.searchStudentsByCondition(id, fullName, furigana,
-        nickname,
-        emailAddress, area, age, sex);
+        nickname, emailAddress, area, age, sex);
 
     List<String> idList = studentList.stream()
         .map(Student::getId)
