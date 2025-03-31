@@ -6,8 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-
-import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -15,13 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +25,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import raisetech.studentManagement.date.ApplicationStatus;
 import raisetech.studentManagement.date.Student;
 import raisetech.studentManagement.date.StudentCourse;
-import raisetech.studentManagement.domain.StudentDetail;
+import raisetech.studentManagement.domain.CourseDetail;
 import raisetech.studentManagement.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -61,6 +58,15 @@ class StudentControllerTest {
         .andExpect(status().isOk());
 
     verify(service, times(1)).searchStudent(id);
+  }
+
+  @Test
+  void 受講生コース詳細の検索ができて空で返ってくること() throws Exception {
+    String id = "100";
+    mockMvc.perform(get("/course/{id}", id))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).searchCoursesByStudentId(id);
   }
 
   @Test
@@ -97,22 +103,24 @@ class StudentControllerTest {
     mockMvc.perform(post("/registerStudent")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
-                {
-                  "student":{
-                    "fullName":"渡辺　恵子",
-                    "furigana":"わたなべ　けいこ",
-                    "nickname":"けいこ",
-                    "emailAddress":"unique.user1937@example.com",
-                    "area":"東京都",
-                    "age":30,
-                    "sex":"女"
-                  },
-                  "studentCourseList":[
-                    {
-                      "course":"JAVAコース"
-                    }
-                  ]
-                }
+                 {
+                     "student":{
+                         "fullName": "渡辺　恵子",
+                         "furigana": "わたなべ　けいこ",
+                         "nickname": "けいこ",
+                         "emailAddress": "unique.user1937@example.com",
+                         "area": "東京都",
+                         "age": 30,
+                         "sex": "女",
+                         "remark": "特になし"
+                     },
+                     "courseDetail":{
+                         "course": "JAVAコース",
+                         "startDate": "2025-01-01",
+                         "expectedCompletionDate": "2026-01-01",
+                         "applicationStatus":"仮申込"
+                     }
+                 }
                 """))
         .andExpect(status().isOk());
 
@@ -120,34 +128,74 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細の更新ができて適切なメッセージが返ってくること() throws Exception {
+  void 受講コース詳細の登録ができて空の受講コース詳細が返ってくること() throws Exception {
+    mockMvc.perform(post("/registerCourse")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {
+                    "studentId": "100",
+                    "course": "JAVAコース",
+                    "startDate": "2025-01-01",
+                    "expectedCompletionDate": "2026-01-01",
+                    "applicationStatus": "仮申込"
+                }
+                """))
+        .andExpect(status().isOk());
+
+    verify(service, times(1)).registerCourse(any());
+  }
+
+  @Test
+  void 受講生の更新ができて適切なメッセージが返ってくること() throws Exception {
     mockMvc.perform(put("/updateStudent")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {
-                  "student":{
-                    "id":"100",
-                    "fullName":"渡辺　恵子",
-                    "furigana":"わたなべ　けいこ",
-                    "nickname":"けいこ",
-                    "emailAddress":"unique.user1937@example.com",
-                    "area":"東京都",
-                    "age":30,
-                    "sex":"女"
-                  },
-                  "studentCourseList":[
-                    {
-                      "id":"100",
-                      "studentId":"100",
-                      "course":"JAVAコース"
-                    }
-                  ]
+                    "id": "100",
+                    "fullName": "渡辺 恵子",
+                    "furigana": "わたなべ けいこ",
+                    "nickname": "けいこ",
+                    "emailAddress": "unique.user1937@example.com",
+                    "area": "東京都",
+                    "age": 30,
+                    "sex": "女"
                 }
                 """))
         .andExpect(status().isOk())
         .andExpect(content().string("更新処理が成功しました。"));
 
     verify(service, times(1)).updateStudent(any());
+  }
+
+  @Test
+  void 受講コース詳細の更新ができて適切なメッセージが返ってくること() throws Exception {
+    mockMvc.perform(put("/updateCourse")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {
+                    "studentId": "100",
+                    "courseId": "1",
+                    "course": "JAVAコース",
+                    "startDate": "2024-01-01",
+                    "expectedCompletionDate": "2025-01-01",
+                    "applicationStatusId": 1,
+                    "applicationStatus": "受講終了"
+                }
+                """))
+        .andExpect(status().isOk())
+        .andExpect(content().string("更新処理が成功しました。"));
+
+    verify(service, times(1)).updateCourse(any());
+  }
+
+  @Test
+  void 受講生コース詳細の削除ができて適切なメッセージが返ってくること() throws Exception {
+    String courseId = "100";
+    mockMvc.perform(delete("/deleteCourse/{courseId}", courseId))
+        .andExpect(status().isOk())
+        .andExpect(content().string("削除処理が成功しました。"));
+
+    verify(service, times(1)).deleteCourse(courseId);
   }
 
   @Test
@@ -222,6 +270,52 @@ class StudentControllerTest {
         .containsOnly(
             tuple("id", "数字のみ入力するようにしてください。"),
             tuple("studentId", "数字のみ入力するようにしてください。")
+        );
+  }
+
+  @Test
+  void 受講コース申込状況で適切な値を入力した時に入力チェックに異常が発生しないこと() {
+    ApplicationStatus applicationStatus = new ApplicationStatus(1, "1", "仮申込");
+
+    Set<ConstraintViolation<ApplicationStatus>> violations = validator.validate(applicationStatus);
+
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  void 受講コース申込状況でコースIDに数字以外を用いた時に入力チェックがかかること() {
+    ApplicationStatus applicationStatus = new ApplicationStatus(1, "テストです", "仮申込");
+
+    Set<ConstraintViolation<ApplicationStatus>> violations = validator.validate(applicationStatus);
+
+    assertThat(violations.size()).isEqualTo(1);
+    assertThat(violations).extracting("message")
+        .containsOnly("数字のみ入力するようにしてください。");
+  }
+
+  @Test
+  void 受講生コース詳細で適切な値を入力した時に入力チェックに異常が発生しないこと() {
+    CourseDetail courseDetail1 = new CourseDetail("1", "1", "JAVAコース",
+        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"), 1, "仮申込");
+
+    Set<ConstraintViolation<CourseDetail>> violations = validator.validate(courseDetail1);
+
+    assertThat(violations.size()).isEqualTo(0);
+  }
+
+  @Test
+  void 受講生コース詳細で受講生IDとコースIDに数字以外を用いた時に入力チェックにかかること() {
+    CourseDetail courseDetail1 = new CourseDetail("テストです。", "テストです。", "JAVAコース",
+        LocalDate.parse("2024-01-01"), LocalDate.parse("2024-04-01"), 1, "仮申込");
+
+    Set<ConstraintViolation<CourseDetail>> violations = validator.validate(courseDetail1);
+
+    assertThat(violations.size()).isEqualTo(2);
+    assertThat(violations).extracting(v -> v.getPropertyPath().toString(),
+            ConstraintViolation::getMessage)
+        .containsOnly(
+            tuple("studentId", "数字のみ入力するようにしてください。"),
+            tuple("courseId", "数字のみ入力するようにしてください。")
         );
   }
 }
